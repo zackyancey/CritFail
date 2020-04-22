@@ -29,7 +29,7 @@ pub trait ScoreRoll {
 /// result
 pub trait DisplayRoll {
     // TODO: Document these functions
-    // TODO: modify this to be more closely tied to the display/debug trait
+    // TODO: Maybe just replace this with Display/Debug? Or auto-implement Display/Debug
     fn display_score(&self) -> String;
     fn display_parts(&self) -> String;
 }
