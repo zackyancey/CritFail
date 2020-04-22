@@ -90,6 +90,18 @@ mod tests {
     use DamageRollPart::Modifier as Mr;
 
     #[test]
+    fn empty() {
+        let r = DamageRoll {
+            sum: None,
+            scores: vec![],
+        };
+        assert_eq!(r.score(), 0);
+        assert_eq!(r.score(), 0); // Check twice to make sure nothing is weird with lazy evaluation
+        assert_eq!(format!("{}", r), "0");
+        assert_eq!(format!("{:?}", r), "");
+    }
+
+    #[test]
     fn just_modifier() {
         let r = DamageRoll {
             sum: None,

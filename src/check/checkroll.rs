@@ -13,19 +13,34 @@ pub struct CheckRoll {
 
 impl ScoreRoll for CheckRoll {
     fn score(&self) -> Score {
-        unimplemented!()
+        self.main + self.modifiers.score()
     }
 }
 
 impl fmt::Display for CheckRoll {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        unimplemented!()
+        write!(f, "{}", self.score())
     }
 }
 
 impl fmt::Debug for CheckRoll {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        unimplemented!()
+        if let Some(other) = self.other {
+            write!(f, "({}/{})", self.main, other)?
+        } else {
+            write!(f, "({})", self.main)?
+        }
+
+        let mods = format!("{:?}", self.modifiers);
+
+        if mods != "" {
+            if !(mods.starts_with('+') || mods.starts_with('-')) {
+                write!(f, "+")?
+            }
+            write!(f, "{}", mods)?
+        }
+
+        Ok(())
     }
 }
 
