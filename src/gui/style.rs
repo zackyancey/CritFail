@@ -1,5 +1,16 @@
 use iced::{button, Background, Color, Vector};
 
+pub mod text {
+    use iced::Text;
+    pub fn header(text: &str) -> Text {
+        Text::new(text).size(30)
+    }
+
+    pub fn paragraph(text: &str) -> Text {
+        Text::new(text)
+    }
+}
+
 pub enum Button {
     Primary,
     Secondary,

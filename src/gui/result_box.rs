@@ -1,5 +1,5 @@
 use super::ExpressionBox;
-use critfail::Roll;
+use critfail::{Roll, RollExp, Rollable};
 use iced::{Align, Color, Column, Element, HorizontalAlignment, Length, Row, Space, Text};
 
 #[derive(Clone)]
@@ -12,7 +12,7 @@ pub(super) struct ResultBox {
 impl Default for ResultBox {
     fn default() -> Self {
         Self {
-            name: "Enter something to roll in the boxes below and click 'roll'".into(),
+            name: "".into(),
             expression: Default::default(),
             result: Err(Default::default()),
         }
@@ -32,6 +32,13 @@ pub(super) enum ResultMessage {
 }
 
 impl ResultBox {
+    pub(super) fn with_title(title: &str) -> Self {
+        Self {
+            name: title.into(),
+            ..Default::default()
+        }
+    }
+
     pub(super) fn update(&mut self, message: ResultMessage) {
         match message {
             ResultMessage::RollSucceeded {
@@ -110,6 +117,16 @@ impl ResultMessage {
                 roll,
             },
             Err(error) => ResultMessage::RollError { name, error },
+        }
+    }
+
+    pub(super) fn from_example(expression: String) -> Self {
+        let rollexp: RollExp = expression.parse().unwrap();
+
+        ResultMessage::RollSucceeded {
+            name: expression,
+            expression: "".into(),
+            roll: rollexp.roll(),
         }
     }
 }
