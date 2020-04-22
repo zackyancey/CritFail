@@ -1,13 +1,25 @@
 use std::error::Error;
 use std::str::FromStr;
-
+use regex::Regex;
 use crate::Attack;
+use crate::ParseError;
+
+lazy_static! {
+    static ref ATTACK_RE: Regex = Regex::new(r"^([^?]+) *\? *([^?]+)$").unwrap();
+}
 
 impl FromStr for Attack {
     type Err = Box<dyn Error>;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        unimplemented!()
+        if let Some(cap) = ATTACK_RE.captures(s) {
+            let check = cap[1].parse()?;
+            let damage = cap[2].parse()?;
+
+            Ok(Attack {check, damage})
+        } else {
+            Err(Box::new(ParseError::new(s)))
+        }
     }
 }
 

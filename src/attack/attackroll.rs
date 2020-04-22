@@ -9,19 +9,19 @@ pub struct AttackRoll {
 
 impl AttackRoll {
     pub fn new(check: CheckRoll, damage: DamageRoll) -> AttackRoll {
-        unimplemented!()
+        AttackRoll { check, damage }
     }
 }
 
 impl fmt::Display for AttackRoll {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        unimplemented!()
+        write!(f, "{} ? {}", self.check, self.damage )
     }
 }
 
 impl fmt::Debug for AttackRoll {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        unimplemented!()
+        write!(f, "{:?} ? {:?}", self.check, self.damage )
     }
 }
 
@@ -46,11 +46,11 @@ mod tests {
     #[test]
     fn with_modifier() {
         let r = AttackRoll::new(
-            CheckRoll::new(&Advantage, 5, 12, DamageRoll::new(vec![Mr(3)])),
+            CheckRoll::new(&Disadvantage, 5, 12, DamageRoll::new(vec![Mr(3)])),
             DamageRoll::new(vec![Dr(8, vec![2, 6, 8]), Mr(-2)]),
         );
 
-        assert_eq!(format!("{}", r), "15 ? 14");
+        assert_eq!(format!("{}", r), "8 ? 14");
         assert_eq!(format!("{:?}", r), "(5/12)+3 ? [2+6+8]-2");
     }
 
@@ -69,7 +69,7 @@ mod tests {
     fn critfail() {
         let r = AttackRoll::new(
             CheckRoll::new(&Disadvantage, 15, 1, DamageRoll::new(vec![Mr(3)])),
-            DamageRoll::new(vec![Dr(8, vec![2, 6, 8]), Dr(8, vec![1, 5, 2]), Mr(-2)]),
+            DamageRoll::new(vec![Dr(8, vec![3, 1]), Mr(-2)]),
         );
 
         assert_eq!(format!("{}", r), "Fail ? 2");

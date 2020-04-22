@@ -17,6 +17,24 @@ pub enum DamagePart {
 #[derive(Debug, PartialEq)]
 pub struct Damage(pub Vec<DamagePart>);
 
+impl Damage {
+    pub fn crit_roll(&self)->DamageRoll {
+        let mut result = Vec::new();
+
+        for part in &self.0 {
+            match part {
+                DamagePart::Dice(_, sides) if *sides > 0 => {
+                    result.push(part.roll());
+                    result.push(part.roll());
+                },
+                _ => {result.push(part.roll());}
+            }
+        }
+
+        DamageRoll::new(result)
+    }
+}
+
 impl Rollable for Damage {
     type Roll = DamageRoll;
 

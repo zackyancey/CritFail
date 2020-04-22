@@ -1,10 +1,10 @@
-use roll4::{Check, Rollable};
+use roll4::{Attack, Rollable};
 use std::env;
 use std::process;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let d = args[1].parse::<Check>().unwrap_or_else(|e| {
+    let d = args[1].parse::<Attack>().unwrap_or_else(|e| {
         println!("Invalid token: {}", e);
         process::exit(1)
     });
