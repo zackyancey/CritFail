@@ -10,7 +10,7 @@ pub enum RollExp {
 
 // TODO: make this an impl FromStr for RollExp
 pub fn parse(e: &str) -> Result<RollExp, ()> {
-    Ok(RollExp::Damage(vec![DamagePart::Dice(2, 10)]))
+    unimplemented!()
 }
 
 #[cfg(test)]
@@ -97,7 +97,7 @@ mod tests {
             parse("r+1d4+2"),
             Ok(RollExp::Check(Check {
                 adv: Disadvantage,
-                modifier: vec![D(-1, 4), M(2)]
+                modifier: vec![D(1, 4), M(2)]
             }))
         );
     }
@@ -122,7 +122,7 @@ mod tests {
             parse("-1d4+2"),
             Ok(RollExp::Check(Check {
                 adv: Neutral,
-                modifier: vec![D(-1, 4), M(2)]
+                modifier: vec![D(1, 4), M(2)]
             }))
         );
     }

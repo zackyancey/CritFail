@@ -1,17 +1,18 @@
 use std::fmt;
 
-use rand::Rng;
-
-mod damage;
-pub use damage::*;
-mod check;
-pub use check::*;
-mod attack;
 pub use attack::*;
-mod rollexp;
+pub use check::*;
+pub use damage::*;
 pub use rollexp::*;
 
+mod attack;
+mod check;
+mod damage;
+mod rollexp;
+mod util;
+
 pub type Score = i32;
+pub type Sides = i32;
 
 /// Represents an object that defines a set of dice that can be rolled
 /// to get a result.

@@ -1,11 +1,17 @@
-use std::fmt;
+use std::error::Error;
+use std::str::FromStr;
 
-use crate::Score;
-use crate::{Rollable, ScoreRoll};
+use rand::Rng;
+
+use crate::Rollable;
+use crate::{Score, Sides};
+
+mod damageroll;
+pub use damageroll::*;
 
 #[derive(PartialEq, Debug)]
 pub enum DamagePart {
-    Dice(i32, u32),
+    Dice(u32, Sides),
     Modifier(Score),
 }
 
@@ -15,33 +21,24 @@ impl Rollable for Damage {
     type Roll = DamageRoll;
 
     fn roll(&self) -> Self::Roll {
-        unimplemented!()
+        DamageRoll::new(self.iter().map(|part| part.roll()).collect())
     }
 }
 
-enum DamageResultPart {
-    Dice(Vec<Score>),
-    Modifier(Score),
-}
+impl Rollable for DamagePart {
+    type Roll = damageroll::DamageRollPart;
 
-pub struct DamageRoll {
-    scores: DamageResultPart,
-}
+    fn roll(&self) -> Self::Roll {
+        match self {
+            DamagePart::Dice(num, sides) => {
+                let rolls: Vec<Score> = (0..*num)
+                    .map(|_| rand::thread_rng().gen_range(1, sides.abs() + 1))
+                    .collect();
 
-impl ScoreRoll for DamageRoll {
-    fn score(&self) -> Score {
-        unimplemented!()
-    }
-}
+                DamageRollPart::Dice(*sides, rolls)
+            }
 
-impl fmt::Display for DamageRoll {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        unimplemented!()
-    }
-}
-
-impl fmt::Debug for DamageRoll {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        unimplemented!()
+            DamagePart::Modifier(value) => DamageRollPart::Modifier(*value),
+        }
     }
 }
