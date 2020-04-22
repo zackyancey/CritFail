@@ -15,9 +15,9 @@ build:
 	cargo fmt
 	cargo build
 
-run:
+run +ARGS="":
 	cargo fmt
-	cargo run
+	cargo run {{ARGS}}
 
 clean:
 	cargo clean

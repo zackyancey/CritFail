@@ -1,18 +1,19 @@
-use critfail::{RollExp, Rollable};
-use std::env;
-use std::process;
+mod cli;
 mod gui;
 
-fn main() {
+use git_version::git_version;
+use std::{env, error::Error};
+
+const GIT_VERSION: &str = git_version!();
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
     if args.len() > 1 {
-        let d = args[1].parse::<RollExp>().unwrap_or_else(|e| {
-            println!("Invalid token: {}", e);
-            process::exit(1)
-        });
-        let result = d.roll();
-        println!("{:?}\n{}", result, result);
+        cli::run_args(args)?;
     } else {
         gui::run();
     }
+
+    Ok(())
 }
