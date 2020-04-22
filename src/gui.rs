@@ -1,3 +1,4 @@
+use crate::{GIT_VERSION, VERSION};
 use iced::{
     button, scrollable, Align, Button, Color, Column, Container, Element, HorizontalAlignment,
     Length, Row, Sandbox, Scrollable, Settings, Space, Text, VerticalAlignment,
@@ -41,6 +42,8 @@ struct Window {
     example_result_check: ResultBox,
     example_result_damage: ResultBox,
     example_result_attack: ResultBox,
+
+    shameless_plug_button: button::State,
 }
 
 #[derive(Debug, Clone)]
@@ -49,6 +52,7 @@ enum Message {
     AddPressed,
     ToggleView,
     ExampleRolled(ExampleSection, String),
+    OpenGitHub,
 }
 
 #[derive(Debug, Clone)]
@@ -119,6 +123,7 @@ impl Sandbox for Window {
                 ExampleSection::Attack => &mut self.example_result_attack,
             }
             .update(ResultMessage::from_example(expression)),
+            Message::OpenGitHub => open_url(env!("CARGO_PKG_REPOSITORY")),
         }
     }
 
@@ -223,6 +228,10 @@ impl Sandbox for Window {
                 .push(example("+3 to hit, 1d8 of damage", "r+3?1d8", &mut self.example_button_9, ExampleSection::Attack))
                 .push(example("attack with advantage and +5 to hit, 1d4+4+5d6 of damage", "a+5?1d4+4+5d6", &mut self.example_button_10, ExampleSection::Attack))
                 .push(self.example_result_attack.view())
+
+                .push(style::text::header("About"))
+                .push(Text::new(format!("Critfail v{}-{}", VERSION, GIT_VERSION)))
+                .push(Button::new(&mut self.shameless_plug_button, Text::new("View on GitHub")).on_press(Message::OpenGitHub).style(style::Button::Primary))
                 .into(),
         };
 
@@ -259,4 +268,17 @@ fn example<'a>(
                 ),
         )
         .into()
+}
+
+fn open_url(url: &str) {
+    #[cfg(target_arch = "wasm32")]
+    {
+        web_sys::window().map(|w| w.open_with_url(url));
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        match webbrowser::open(url) {
+            _ => (),
+        };
+    }
 }

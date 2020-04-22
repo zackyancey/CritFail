@@ -1,8 +1,9 @@
 [package]
 name = "critfail"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Zack Yancey <mail@zackyancey.com>"]
 edition = "2018"
+repository = "https://github.com/zackyancey/CritFail"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -12,6 +13,12 @@ regex = "1"
 lazy_static = "1.4.0"
 iced = "0.1"
 git-version = "0.3.4"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+web-sys = { version = "0.3", features = ["Window"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+webbrowser = "0.5"
 
 [profile.release]
 lto = true
