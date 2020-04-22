@@ -1,4 +1,4 @@
-use roll4::{RollExp, Rollable};
+use critfail::{RollExp, Rollable};
 use std::env;
 use std::process;
 mod gui;

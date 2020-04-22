@@ -1,9 +1,9 @@
 //! This module defines the element that is used for entering attacks.
+use critfail::{Roll, RollExp, Rollable};
 use iced::{
     button, text_input, Align, Button, Column, Element, Length, Row, Text, TextInput,
     VerticalAlignment,
 };
-use roll4::{Roll, RollExp, Rollable};
 
 #[derive(Debug, Clone)]
 /// Messages that can be sent by an expression box.

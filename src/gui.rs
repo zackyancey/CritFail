@@ -1,6 +1,5 @@
 use iced::{
-    button, Align, Button, Column, Element, HorizontalAlignment, Length, Sandbox, Settings,
-    Text,
+    button, Align, Button, Column, Element, HorizontalAlignment, Length, Sandbox, Settings, Text,
 };
 
 mod expression_box;
@@ -36,7 +35,7 @@ impl Sandbox for Window {
     }
 
     fn title(&self) -> String {
-        String::from("Window - Iced")
+        String::from("Critfail")
     }
 
     fn update(&mut self, message: Message) {

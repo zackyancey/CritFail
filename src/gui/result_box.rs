@@ -1,6 +1,6 @@
 use super::ExpressionBox;
+use critfail::Roll;
 use iced::{Align, Column, Element, HorizontalAlignment, Length, Row, Space, Text};
-use roll4::Roll;
 
 #[derive(Clone)]
 pub(super) struct ResultBox {
