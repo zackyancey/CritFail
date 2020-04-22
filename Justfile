@@ -18,6 +18,11 @@ web-release:
 	wasm-bindgen ./target/wasm32-unknown-unknown/release/critfail.wasm --out-dir web/build --web
 	wasm-opt -Oz web/build/critfail_bg.wasm -o web/build/critfail_bg.wasm
 
+web-deploy: web-release
+	echo rm -vrI $CRITFAIL_SERVER_DIR
+	ssh $CRITFAIL_SERVER rm -vrI $CRITFAIL_SERVER_DIR
+	scp -r ./web $CRITFAIL_SERVER:$CRITFAIL_SERVER_DIR
+
 web-size: web-release
 	ls -lh web/build/critfail_bg.wasm
 	stat -c %s web/build/critfail_bg.wasm
