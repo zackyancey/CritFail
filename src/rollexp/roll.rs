@@ -2,6 +2,7 @@ use std::fmt;
 
 use crate::{AttackRoll, CheckRoll, DamageRoll};
 
+#[derive(Clone)]
 pub enum Roll {
     CheckRoll(CheckRoll),
     DamageRoll(DamageRoll),

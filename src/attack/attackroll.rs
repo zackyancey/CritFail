@@ -2,6 +2,7 @@ use std::fmt;
 
 use crate::{CheckRoll, DamageRoll};
 
+#[derive(Clone)]
 pub struct AttackRoll {
     check: CheckRoll,
     damage: DamageRoll,
@@ -15,13 +16,13 @@ impl AttackRoll {
 
 impl fmt::Display for AttackRoll {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} ? {}", self.check, self.damage )
+        write!(f, "{} ? {}", self.check, self.damage)
     }
 }
 
 impl fmt::Debug for AttackRoll {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:?} ? {:?}", self.check, self.damage )
+        write!(f, "{:?} ? {:?}", self.check, self.damage)
     }
 }
 

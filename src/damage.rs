@@ -8,17 +8,17 @@ mod damageroll;
 
 pub use damageroll::*;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum DamagePart {
     Dice(u32, Sides),
     Modifier(Score),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Damage(pub Vec<DamagePart>);
 
 impl Damage {
-    pub fn crit_roll(&self)->DamageRoll {
+    pub fn crit_roll(&self) -> DamageRoll {
         let mut result = Vec::new();
 
         for part in &self.0 {
@@ -26,8 +26,10 @@ impl Damage {
                 DamagePart::Dice(_, sides) if *sides > 0 => {
                     result.push(part.roll());
                     result.push(part.roll());
-                },
-                _ => {result.push(part.roll());}
+                }
+                _ => {
+                    result.push(part.roll());
+                }
             }
         }
 

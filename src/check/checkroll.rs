@@ -12,6 +12,7 @@ pub enum CritScore {
     Fail,
 }
 
+#[derive(Clone)]
 pub struct CheckRoll {
     main: Score,
     other: Option<Score>,
@@ -88,7 +89,7 @@ mod tests {
     #[test]
     fn neutral() {
         let r = CheckRoll::new(&Neutral, 10, 16, DamageRoll::new(vec![]));
-        assert_eq!(r.score(), 10);;
+        assert_eq!(r.score(), 10);
         assert_eq!(format!("{}", r), "10");
         assert_eq!(format!("{:?}", r), "(10)");
     }
@@ -112,7 +113,7 @@ mod tests {
     #[test]
     fn die_modifier() {
         let r = CheckRoll::new(&Neutral, 6, 15, DamageRoll::new(vec![Dr(4, vec![1])]));
-        assert_eq!(r.score(), 7);;
+        assert_eq!(r.score(), 7);
         assert_eq!(format!("{}", r), "7");
         assert_eq!(format!("{:?}", r), "(6)+[1]");
     }
@@ -125,7 +126,7 @@ mod tests {
             4,
             DamageRoll::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
         );
-        assert_eq!(r.score(), 10);;
+        assert_eq!(r.score(), 10);
         assert_eq!(format!("{}", r), "10");
         assert_eq!(format!("{:?}", r), "(12/4)-[2+3]+3");
     }
@@ -138,7 +139,7 @@ mod tests {
             4,
             DamageRoll::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
         );
-        assert_eq!(r.score(), 18);;
+        assert_eq!(r.score(), 18);
         assert_eq!(format!("{}", r), "Critical");
         assert_eq!(format!("{:?}", r), "(20/4)-[2+3]+3");
     }
@@ -151,7 +152,7 @@ mod tests {
             4,
             DamageRoll::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
         );
-        assert_eq!(r.score(), -1);;
+        assert_eq!(r.score(), -1);
         assert_eq!(format!("{}", r), "Fail");
         assert_eq!(format!("{:?}", r), "(1/4)-[2+3]+3");
     }

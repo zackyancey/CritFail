@@ -35,9 +35,9 @@ impl FromStr for Check {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::*;
     use crate::DamagePart::Dice as D;
     use crate::DamagePart::Modifier as M;
+    use crate::*;
 
     #[test]
     fn basic() {
@@ -146,5 +146,4 @@ mod tests {
         assert!("r+3+bad".parse::<Check>().is_err());
         assert!("r+3+1d4/2".parse::<Check>().is_err());
     }
-
 }

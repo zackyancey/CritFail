@@ -1,7 +1,7 @@
 use rand::Rng;
 
-use crate::{Damage};
-use crate::{Rollable};
+use crate::Damage;
+use crate::Rollable;
 
 pub use checkroll::*;
 
@@ -9,14 +9,14 @@ mod checkparse;
 mod checkroll;
 
 /// The advantage state of an ability check
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum AdvState {
     Advantage,
     Neutral,
     Disadvantage,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Check {
     pub adv: AdvState,
     pub modifier: Damage,

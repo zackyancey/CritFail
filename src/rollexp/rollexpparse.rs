@@ -1,13 +1,15 @@
 use std::error::Error;
 use std::str::FromStr;
 
-use crate::RollExp;
+use crate::{ParseError, RollExp};
 
 impl FromStr for RollExp {
     type Err = Box<dyn Error>;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.contains('?') {
+        if s.is_empty() {
+            Err(ParseError::new("Empty String").into())
+        } else if s.contains('?') {
             Ok(RollExp::Attack(s.parse()?))
         } else if "rad+-".contains(&s[0..1]) {
             Ok(RollExp::Check(s.parse()?))
@@ -20,10 +22,10 @@ impl FromStr for RollExp {
 // TODO: Fix these tests for new format
 #[cfg(test)]
 mod tests {
-    use crate::*;
     use crate::check::AdvState::*;
     use crate::DamagePart::Dice as D;
     use crate::DamagePart::Modifier as M;
+    use crate::*;
 
     #[test]
     fn damage_basic() {
@@ -159,7 +161,7 @@ mod tests {
                     adv: Neutral,
                     modifier: Damage(vec![M(3)])
                 },
-                damage: Damage(vec![D(2,8), M(-1)])
+                damage: Damage(vec![D(2, 8), M(-1)])
             })
         );
 
@@ -170,7 +172,7 @@ mod tests {
                     adv: Advantage,
                     modifier: Damage(vec![M(-1)])
                 },
-                damage: Damage(vec![D(2,8), M(1)])
+                damage: Damage(vec![D(2, 8), M(1)])
             })
         );
 
@@ -181,7 +183,7 @@ mod tests {
                     adv: Neutral,
                     modifier: Damage(vec![M(8)])
                 },
-                damage: Damage(vec![D(3,10), M(2)])
+                damage: Damage(vec![D(3, 10), M(2)])
             })
         );
 
@@ -190,12 +192,11 @@ mod tests {
             RollExp::Attack(Attack {
                 check: Check {
                     adv: Advantage,
-                    modifier: Damage(vec![D(1,4), M(3), M(-1)])
+                    modifier: Damage(vec![D(1, 4), M(3), M(-1)])
                 },
-                damage: Damage(vec![D(1,4), D(4,6), M(2), D(1, -4)])
+                damage: Damage(vec![D(1, 4), D(4, 6), M(2), D(1, -4)])
             })
         );
-
     }
 
     // TODO: Finish tests

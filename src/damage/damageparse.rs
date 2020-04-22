@@ -71,14 +71,14 @@ mod tests {
         ($string:expr, $damage:expr) => {
             let d = $string.parse::<DamagePart>().unwrap();
             assert_eq!(d, $damage);
-        }
+        };
     }
 
     macro_rules! test_damage {
         ($string:expr, $damage:expr) => {
             let d = $string.parse::<Damage>().unwrap();
             assert_eq!(d, $damage);
-        }
+        };
     }
 
     mod parse_damagepart {
@@ -88,7 +88,7 @@ mod tests {
             test_damagepart!("2d8", DamagePart::Dice(2, 8));
             test_damagepart!("1d12", DamagePart::Dice(1, 12));
             test_damagepart!("3d6", DamagePart::Dice(3, 6));
-            test_damagepart!("421d314159", DamagePart::Dice(421, 314159));
+            test_damagepart!("421d314159", DamagePart::Dice(421, 314_159));
         }
 
         #[test]
@@ -96,7 +96,7 @@ mod tests {
             test_damagepart!("-2d8", DamagePart::Dice(2, -8));
             test_damagepart!("-1d12", DamagePart::Dice(1, -12));
             test_damagepart!("-3d6", DamagePart::Dice(3, -6));
-            test_damagepart!("-421d314159", DamagePart::Dice(421, -314159));
+            test_damagepart!("-421d314159", DamagePart::Dice(421, -314_159));
         }
 
         #[test]
@@ -117,7 +117,6 @@ mod tests {
             assert!("".parse::<DamagePart>().is_err());
             assert!("2d6+3".parse::<DamagePart>().is_err());
         }
-
     }
 
     mod parse_damage {
@@ -127,10 +126,13 @@ mod tests {
 
         #[test]
         fn normal_damage() {
-           test_damage!("2d6+3", Damage(vec![D(2, 6), M(3)]));
-           test_damage!("8d4-4", Damage(vec![D(8, 4), M(-4)]));
-           test_damage!("-2d8+3", Damage(vec![D(2, -8), M(3)]));
-           test_damage!("3d12+3d6-1d4+2-3", Damage(vec![D(3, 12), D(3, 6), D(1, -4), M(2), M(-3)]));
+            test_damage!("2d6+3", Damage(vec![D(2, 6), M(3)]));
+            test_damage!("8d4-4", Damage(vec![D(8, 4), M(-4)]));
+            test_damage!("-2d8+3", Damage(vec![D(2, -8), M(3)]));
+            test_damage!(
+                "3d12+3d6-1d4+2-3",
+                Damage(vec![D(3, 12), D(3, 6), D(1, -4), M(2), M(-3)])
+            );
         }
 
         #[test]

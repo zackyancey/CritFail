@@ -1,13 +1,13 @@
+use crate::CritScore;
 use crate::Rollable;
 use crate::{Check, Damage};
-use crate::CritScore;
 
 pub use attackroll::*;
 
 mod attackparse;
 mod attackroll;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Attack {
     pub check: Check,
     pub damage: Damage,

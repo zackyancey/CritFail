@@ -6,11 +6,13 @@ use crate::{Score, Sides};
 use crate::util;
 use DamageRollPart::*;
 
+#[derive(Clone)]
 pub struct DamageRoll {
     sum: Option<Score>,
     scores: Vec<DamageRollPart>,
 }
 
+#[derive(Clone)]
 pub enum DamageRollPart {
     Dice(Sides, Vec<Score>),
     Modifier(Score),

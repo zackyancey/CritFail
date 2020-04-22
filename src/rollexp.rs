@@ -6,7 +6,7 @@ pub use roll::*;
 mod roll;
 mod rollexpparse;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum RollExp {
     Check(Check),
     Damage(Damage),

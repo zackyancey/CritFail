@@ -1,8 +1,8 @@
-use std::error::Error;
-use std::str::FromStr;
-use regex::Regex;
 use crate::Attack;
 use crate::ParseError;
+use regex::Regex;
+use std::error::Error;
+use std::str::FromStr;
 
 lazy_static! {
     static ref ATTACK_RE: Regex = Regex::new(r"^([^?]+) *\? *([^?]+)$").unwrap();
@@ -16,7 +16,7 @@ impl FromStr for Attack {
             let check = cap[1].parse()?;
             let damage = cap[2].parse()?;
 
-            Ok(Attack {check, damage})
+            Ok(Attack { check, damage })
         } else {
             Err(Box::new(ParseError::new(s)))
         }
