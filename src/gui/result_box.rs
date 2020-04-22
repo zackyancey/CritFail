@@ -88,7 +88,7 @@ impl ResultBox {
 }
 
 impl ResultMessage {
-    pub(super) fn roll(expression: &ExpressionBox, roll: Result<Roll, String>) -> Self {
+    pub(super) fn from_roll(expression: &ExpressionBox, roll: Result<Roll, String>) -> Self {
         let name = expression.name().into();
 
         if expression.expression().is_empty() {

@@ -18,3 +18,7 @@ build:
 run:
 	cargo fmt
 	cargo run
+
+clean:
+	cargo clean
+	rm -rf web/build

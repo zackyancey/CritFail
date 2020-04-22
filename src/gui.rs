@@ -47,7 +47,7 @@ impl Sandbox for Window {
                 let result = expression.roll();
 
                 self.result_box
-                    .update(ResultMessage::roll(&expression, result))
+                    .update(ResultMessage::from_roll(&expression, result))
             }
             Message::ExpressionMessage(i, ExpressionMessage::DeletePressed) => {
                 self.expressions.remove(i);
