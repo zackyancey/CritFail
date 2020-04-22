@@ -4,12 +4,32 @@ use std::str::FromStr;
 use crate::AdvState::*;
 use crate::Check;
 use crate::Damage;
+use crate::ParseError;
 
 impl FromStr for Check {
     type Err = Box<dyn Error>;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        unimplemented!()
+        // Figure out the advantage from the first character
+        let (adv, i) = if s.starts_with('r') {
+            (Neutral, 1)
+        } else if s.starts_with('a') {
+            (Advantage, 1)
+        } else if s.starts_with('d') {
+            (Disadvantage, 1)
+        } else if s.starts_with('+') || s.starts_with('-') {
+            (Neutral, 0)
+        } else {
+            return Err(Box::new(ParseError::new(s)));
+        };
+
+        // If the character after the advantage character is a +, skip it
+        let i = if s[i..].starts_with('+') { i + 1 } else { i };
+
+        // The rest is the modifier
+        let modifier = s[i..].parse()?;
+
+        Ok(Check { adv, modifier })
     }
 }
 
@@ -32,7 +52,7 @@ mod tests {
         assert_eq!(
             "a".parse::<Check>().unwrap(),
             Check {
-                adv: Neutral,
+                adv: Advantage,
                 modifier: Damage(vec![])
             }
         );
@@ -40,7 +60,7 @@ mod tests {
         assert_eq!(
             "d".parse::<Check>().unwrap(),
             Check {
-                adv: Neutral,
+                adv: Disadvantage,
                 modifier: Damage(vec![])
             }
         );
@@ -75,7 +95,7 @@ mod tests {
         assert_eq!(
             "r+1d4+2".parse::<Check>().unwrap(),
             Check {
-                adv: Disadvantage,
+                adv: Neutral,
                 modifier: Damage(vec![D(1, 4), M(2)])
             }
         );
@@ -103,7 +123,7 @@ mod tests {
             "-1d4+2".parse::<Check>().unwrap(),
             Check {
                 adv: Neutral,
-                modifier: Damage(vec![D(1, 4), M(2)])
+                modifier: Damage(vec![D(1, -4), M(2)])
             }
         );
 
@@ -111,7 +131,7 @@ mod tests {
             "+1d4".parse::<Check>().unwrap(),
             Check {
                 adv: Neutral,
-                modifier: Damage(vec![D(1, 4), M(2)])
+                modifier: Damage(vec![D(1, 4)])
             }
         );
     }
