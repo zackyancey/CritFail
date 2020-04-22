@@ -1,8 +1,7 @@
-use std::fmt;
-
 use crate::Rollable;
-use crate::{Check, CheckRoll, Damage, DamageRoll};
+use crate::{Check, Damage};
 use crate::CritScore;
+
 pub use attackroll::*;
 
 mod attackparse;

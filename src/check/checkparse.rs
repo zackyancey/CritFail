@@ -3,7 +3,6 @@ use std::str::FromStr;
 
 use crate::AdvState::*;
 use crate::Check;
-use crate::Damage;
 use crate::ParseError;
 
 impl FromStr for Check {
@@ -36,6 +35,7 @@ impl FromStr for Check {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::*;
     use crate::DamagePart::Dice as D;
     use crate::DamagePart::Modifier as M;
 

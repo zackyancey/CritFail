@@ -1,8 +1,7 @@
 use rand::Rng;
-use std::fmt;
 
-use crate::{Damage, Score};
-use crate::{Rollable, ScoreRoll};
+use crate::{Damage};
+use crate::{Rollable};
 
 pub use checkroll::*;
 

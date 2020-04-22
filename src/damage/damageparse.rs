@@ -45,7 +45,7 @@ impl FromStr for Damage {
             let end = s[i + 1..]
                 .find(|c: char| c == '+' || c == '-')
                 .map(|n| (i + 1) + n)
-                .unwrap_or(s.len());
+                .unwrap_or_else(|| s.len());
 
             let part: DamagePart = s[i..end].parse()?;
             result.push(part);
@@ -54,7 +54,7 @@ impl FromStr for Damage {
             i = end;
 
             // If we stopped on a +, skip it
-            if s[i..].starts_with("+") {
+            if s[i..].starts_with('+') {
                 i += 1;
             }
         }
@@ -67,7 +67,7 @@ impl FromStr for Damage {
 mod tests {
     use super::*;
 
-    mod parse_DamagePart {
+    mod parse_damagepart {
         use super::*;
         #[test]
         fn simple_damage() {
@@ -127,7 +127,7 @@ mod tests {
 
     }
 
-    mod parse_Damage {
+    mod parse_damage {
         use super::*;
         use DamagePart::Dice as D;
         use DamagePart::Modifier as M;

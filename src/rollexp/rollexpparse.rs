@@ -2,7 +2,6 @@ use std::error::Error;
 use std::str::FromStr;
 
 use crate::RollExp;
-use crate::{Damage, Check, Attack};
 
 impl FromStr for RollExp {
     type Err = Box<dyn Error>;
@@ -21,7 +20,7 @@ impl FromStr for RollExp {
 // TODO: Fix these tests for new format
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::*;
     use crate::check::AdvState::*;
     use crate::DamagePart::Dice as D;
     use crate::DamagePart::Modifier as M;

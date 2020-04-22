@@ -26,7 +26,7 @@ impl ScoreRoll for DamageRollPart {
     fn score(&self) -> Score {
         match self {
             Dice(sides, d) => {
-                let sum = d.iter().fold(0, |a, &b| a + b);
+                let sum: Score = d.iter().sum();
                 if *sides < 0 {
                     -sum
                 } else {

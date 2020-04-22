@@ -1,6 +1,5 @@
 use crate::AdvState;
 use crate::AdvState::*;
-use crate::Damage;
 use crate::DamageRoll;
 use crate::Score;
 use crate::ScoreRoll;
