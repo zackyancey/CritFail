@@ -8,7 +8,13 @@ impl FromStr for RollExp {
     type Err = Box<dyn Error>;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        unimplemented!()
+        if s.contains('?') {
+            Ok(RollExp::Attack(s.parse()?))
+        } else if "rad+-".contains(&s[0..1]) {
+            Ok(RollExp::Check(s.parse()?))
+        } else {
+            Ok(RollExp::Damage(s.parse()?))
+        }
     }
 }
 
@@ -56,7 +62,7 @@ mod tests {
         );
         assert_eq!(
             "2d8-1d4-1+5".parse::<RollExp>().unwrap(),
-            RollExp::Damage(Damage(vec![D(2, 6), M(4)]))
+            RollExp::Damage(Damage(vec![D(2, 8), D(1, -4), M(-1), M(5)]))
         );
     }
 
@@ -114,7 +120,7 @@ mod tests {
         assert_eq!(
             "r+1d4+2".parse::<RollExp>().unwrap(),
             RollExp::Check(Check {
-                adv: Disadvantage,
+                adv: Neutral,
                 modifier: Damage(vec![D(1, 4), M(2)])
             })
         );
@@ -140,7 +146,7 @@ mod tests {
             "-1d4+2".parse::<RollExp>().unwrap(),
             RollExp::Check(Check {
                 adv: Neutral,
-                modifier: Damage(vec![D(1, 4), M(2)])
+                modifier: Damage(vec![D(1, -4), M(2)])
             })
         );
     }
@@ -184,8 +190,8 @@ mod tests {
             "a+1d4+3-1?1d4+4d6+2-1d4".parse::<RollExp>().unwrap(),
             RollExp::Attack(Attack {
                 check: Check {
-                    adv: Neutral,
-                    modifier: Damage(vec![D(1,4), M(3)])
+                    adv: Advantage,
+                    modifier: Damage(vec![D(1,4), M(3), M(-1)])
                 },
                 damage: Damage(vec![D(1,4), D(4,6), M(2), D(1, -4)])
             })

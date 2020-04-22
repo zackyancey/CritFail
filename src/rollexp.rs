@@ -21,6 +21,10 @@ impl Rollable for RollExp {
     type Roll = Roll;
 
     fn roll(&self) -> Self::Roll {
-        unimplemented!()
+        match self {
+            RollExp::Check(c) => Roll::CheckRoll(c.roll()),
+            RollExp::Damage(d) => Roll::DamageRoll(d.roll()),
+            RollExp::Attack(a) => Roll::AttackRoll(a.roll()),
+        }
     }
 }
