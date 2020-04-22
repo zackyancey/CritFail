@@ -1,6 +1,6 @@
 use iced::{
-    button, scrollable, Align, Button, Column, Element, HorizontalAlignment, Length, Row, Sandbox,
-    Scrollable, Settings, Space, Text,
+    button, scrollable, Align, Button, Column, Container, Element, HorizontalAlignment, Length,
+    Row, Sandbox, Scrollable, Settings, Space, Text,
 };
 
 mod expression_box;
@@ -83,22 +83,26 @@ impl Sandbox for Window {
         .on_press(Message::AddPressed)
         .style(style::Button::Secondary);
 
-        Column::new()
-            .padding(20)
-            .spacing(20)
-            .align_items(Align::Center)
-            .push(self.result_box.view())
-            .push(
-                Scrollable::new(&mut self.expressions_scroll)
-                    .spacing(20)
-                    .push(expressions)
-                    .push(
-                        Row::new()
-                            .push(Space::with_width(Length::Fill))
-                            .push(add_button.width(Length::FillPortion(3)))
-                            .push(Space::with_width(Length::Fill)),
-                    ),
-            )
-            .into()
+        Container::new(
+            Column::new()
+                .max_width(1000)
+                .padding(20)
+                .spacing(20)
+                .align_items(Align::Center)
+                .push(self.result_box.view())
+                .push(
+                    Scrollable::new(&mut self.expressions_scroll)
+                        .spacing(20)
+                        .push(expressions)
+                        .push(
+                            Row::new()
+                                .push(Space::with_width(Length::Fill))
+                                .push(add_button.width(Length::FillPortion(3)))
+                                .push(Space::with_width(Length::Fill)),
+                        ),
+                ),
+        )
+        .center_x()
+        .into()
     }
 }

@@ -33,6 +33,8 @@ pub(super) struct ExpressionBox {
     roll_button: button::State,
 }
 
+const TEXTENTRY_SIZE: u16 = 40;
+
 impl ExpressionBox {
     pub(super) fn new() -> Self {
         ExpressionBox::default()
@@ -50,28 +52,28 @@ impl ExpressionBox {
     pub(super) fn view(&mut self) -> Element<ExpressionMessage> {
         let roll_box = TextInput::new(
             &mut self.roll_box,
-            "Attack roll",
+            "Dice",
             &self.roll,
             ExpressionMessage::RollChanged,
         )
-        .size(50)
+        .size(TEXTENTRY_SIZE)
         .on_submit(ExpressionMessage::RollPressed);
 
         let name_box = TextInput::new(
             &mut self.name_box,
-            "Attack name",
+            "Description",
             &self.name,
             ExpressionMessage::NameChanged,
         )
-        .size(50);
+        .size(TEXTENTRY_SIZE);
 
         let roll_button = Button::new(
             &mut self.roll_button,
             Text::new("Roll")
-                .size(50)
+                .size(TEXTENTRY_SIZE)
                 .vertical_alignment(VerticalAlignment::Center),
         )
-        .height(Length::Units(100))
+        .height(Length::Units(TEXTENTRY_SIZE * 2))
         .padding(20)
         .style(style::Button::Primary)
         .on_press(ExpressionMessage::RollPressed);
