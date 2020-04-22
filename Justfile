@@ -13,7 +13,7 @@ web-build:
 
 web-release:
 	cargo fmt
-	cargo build --target wasm32-unknown-unknown --release
+	cargo build --target wasm32-unknown-unknown --release --no-default-features --features gui
 	rm -rf ./web/build
 	wasm-bindgen ./target/wasm32-unknown-unknown/release/critfail.wasm --out-dir web/build --web
 	wasm-opt -Oz web/build/critfail_bg.wasm -o web/build/critfail_bg.wasm

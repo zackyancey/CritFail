@@ -11,8 +11,8 @@ repository = "https://github.com/zackyancey/CritFail"
 rand = { version = "0.7", features = ["wasm-bindgen"] }
 regex = "1"
 lazy_static = "1.4.0"
-iced = "0.1"
 git-version = "0.3.4"
+iced = {version = "0.1", optional = true}
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 web-sys = { version = "0.3", features = ["Window"] }
@@ -23,3 +23,9 @@ webbrowser = "0.5"
 [profile.release]
 lto = true
 opt-level = 'z'
+
+[features]
+default = ["cli", "gui"]
+
+cli = []
+gui = ['iced']
