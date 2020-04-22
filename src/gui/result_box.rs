@@ -90,6 +90,14 @@ impl ResultBox {
 impl ResultMessage {
     pub(super) fn roll(expression: &ExpressionBox, roll: Result<Roll, String>) -> Self {
         let name = expression.name().into();
+
+        if expression.expression().is_empty() {
+            return ResultMessage::RollError {
+                name,
+                error: "".into(),
+            };
+        };
+
         match roll {
             Ok(roll) => ResultMessage::RollSucceeded {
                 name,
