@@ -1,8 +1,6 @@
+use roll4::{Damage, Rollable};
 use std::env;
 use std::process;
-
-use roll4::DamagePart::*;
-use roll4::{Damage, Rollable};
 
 fn main() {
     let args: Vec<String> = env::args().collect();

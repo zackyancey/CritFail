@@ -48,12 +48,9 @@ impl fmt::Debug for DamageRollPart {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             DamageRollPart::Dice(sides, scores) => {
-                let sign = if *sides < 0 {
+                if *sides < 0 {
                     write!(f, "-")?;
-                    -1
-                } else {
-                    1
-                };
+                }
                 let scores = scores.iter().map(|i| format!("{}", i));
 
                 write!(f, "[")?;

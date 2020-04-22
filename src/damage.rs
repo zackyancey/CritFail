@@ -3,8 +3,8 @@ use rand::Rng;
 use crate::Rollable;
 use crate::{Score, Sides};
 
+mod damageparse;
 mod damageroll;
-mod parse;
 
 pub use damageroll::*;
 

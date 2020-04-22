@@ -8,7 +8,7 @@ where
         if i > 0 && !string.starts_with('-') {
             write!(f, "+")?
         }
-        write!(f, "{}", string);
+        write!(f, "{}", string)?;
     }
     Ok(())
 }

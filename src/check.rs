@@ -3,6 +3,11 @@ use std::fmt;
 use crate::{Damage, Score};
 use crate::{Rollable, ScoreRoll};
 
+pub use checkroll::*;
+
+mod checkparse;
+mod checkroll;
+
 /// The advantage state of an ability check
 #[derive(PartialEq, Debug)]
 pub enum AdvState {
@@ -21,29 +26,6 @@ impl Rollable for Check {
     type Roll = CheckRoll;
 
     fn roll(&self) -> Self::Roll {
-        unimplemented!()
-    }
-}
-
-pub struct CheckRoll {
-    score: Score,
-    other: Option<Score>,
-}
-
-impl ScoreRoll for CheckRoll {
-    fn score(&self) -> Score {
-        unimplemented!()
-    }
-}
-
-impl fmt::Display for CheckRoll {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        unimplemented!()
-    }
-}
-
-impl fmt::Debug for CheckRoll {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         unimplemented!()
     }
 }
