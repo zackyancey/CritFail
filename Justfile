@@ -11,6 +11,17 @@ web-build:
 	cargo build --target wasm32-unknown-unknown
 	wasm-bindgen ./target/wasm32-unknown-unknown/debug/critfail.wasm --out-dir web/build --web
 
+web-release:
+	cargo fmt
+	cargo build --target wasm32-unknown-unknown --release
+	rm -rf ./web/build
+	wasm-bindgen ./target/wasm32-unknown-unknown/release/critfail.wasm --out-dir web/build --web
+	wasm-opt -Oz web/build/critfail_bg.wasm -o web/build/critfail_bg.wasm
+
+web-size: web-release
+	ls -lh web/build/critfail_bg.wasm
+	stat -c %s web/build/critfail_bg.wasm
+
 build:
 	cargo fmt
 	cargo build
