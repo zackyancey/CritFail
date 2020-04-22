@@ -1,3 +1,4 @@
+use rand::Rng;
 use std::fmt;
 
 use crate::{Damage, Score};
@@ -26,6 +27,9 @@ impl Rollable for Check {
     type Roll = CheckRoll;
 
     fn roll(&self) -> Self::Roll {
-        unimplemented!()
+        let r1 = rand::thread_rng().gen_range(1, 21);
+        let r2 = rand::thread_rng().gen_range(1, 21);
+        let mods = self.modifier.roll();
+        CheckRoll::new(&self.adv, r1, r2, mods)
     }
 }
