@@ -86,87 +86,41 @@ impl fmt::Debug for DamageRoll {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::DamagePart::Dice as D;
-    use crate::DamagePart::Modifier as M;
     use DamageRollPart::Dice as Dr;
     use DamageRollPart::Modifier as Mr;
 
-    mod score_damage_roll {
-        use super::*;
-
-        #[test]
-        fn just_modifier() {
-            let r = DamageRoll {
-                sum: None,
-                scores: vec![Mr(2)],
-            };
-            assert_eq!(r.score(), 2);
-            // Check twice to make sure nothing is weird with lazy evaluation
-            assert_eq!(r.score(), 2);
-        }
-
-        #[test]
-        fn dice_modifier() {
-            let r = DamageRoll {
-                sum: None,
-                scores: vec![Dr(4, vec![1, 2, 3]), Mr(-2)],
-            };
-            assert_eq!(r.score(), 4);
-        }
-
-        #[test]
-        fn negative_dice() {
-            let r = DamageRoll {
-                sum: None,
-                scores: vec![Dr(4, vec![1, 2, 3]), Mr(2), Dr(-4, vec![2])],
-            };
-            assert_eq!(r.score(), 6);
-        }
-    }
-
     #[test]
-    fn display_damage_roll() {
+    fn just_modifier() {
         let r = DamageRoll {
             sum: None,
             scores: vec![Mr(2)],
         };
+        assert_eq!(r.score(), 2);
+        assert_eq!(r.score(), 2); // Check twice to make sure nothing is weird with lazy evaluation
         assert_eq!(format!("{}", r), "2");
+        assert_eq!(format!("{:?}", r), "2");
+    }
 
+    #[test]
+    fn dice_modifier() {
         let r = DamageRoll {
             sum: None,
             scores: vec![Dr(4, vec![1, 2, 3]), Mr(-2)],
         };
+
+        assert_eq!(r.score(), 4);
         assert_eq!(format!("{}", r), "4");
+        assert_eq!(format!("{:?}", r), "[1+2+3]-2");
     }
 
-    mod debug_damage {
-        use super::*;
-
-        #[test]
-        fn just_modifier() {
-            let r = DamageRoll {
-                sum: None,
-                scores: vec![Mr(2)],
-            };
-            assert_eq!(format!("{:?}", r), "2");
-        }
-
-        #[test]
-        fn dice_and_mod() {
-            let r = DamageRoll {
-                sum: None,
-                scores: vec![Dr(6, vec![1, 2, 3]), Mr(-2)],
-            };
-            assert_eq!(format!("{:?}", r), "[1+2+3]-2");
-        }
-
-        #[test]
-        fn negative_dice() {
-            let r = DamageRoll {
-                sum: None,
-                scores: vec![Dr(8, vec![4, 1, 6]), Mr(4), Dr(-4, vec![3, 1])],
-            };
-            assert_eq!(format!("{:?}", r), "[4+1+6]+4-[3+1]");
-        }
+    #[test]
+    fn negative_dice() {
+        let r = DamageRoll {
+            sum: None,
+            scores: vec![Dr(6, vec![4, 1, 6]), Mr(4), Dr(-4, vec![3, 1])],
+        };
+        assert_eq!(r.score(), 11);
+        assert_eq!(format!("{}", r), "11");
+        assert_eq!(format!("{:?}", r), "[4+1+6]+4-[3+1]");
     }
 }
