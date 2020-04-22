@@ -7,5 +7,14 @@ web-serve:
 	cd web && python -m http.server
 
 web-build:
+	cargo fmt
 	cargo build --target wasm32-unknown-unknown
 	wasm-bindgen ./target/wasm32-unknown-unknown/debug/critfail.wasm --out-dir web/build --web
+
+build:
+	cargo fmt
+	cargo build
+
+run:
+	cargo fmt
+	cargo run

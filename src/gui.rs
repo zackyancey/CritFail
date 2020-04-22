@@ -3,8 +3,8 @@ use iced::{
     Space, Text,
 };
 
-mod style;
 mod expression_box;
+mod style;
 use expression_box::*;
 mod result_box;
 use result_box::*;
