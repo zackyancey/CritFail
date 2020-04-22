@@ -7,6 +7,12 @@ use crate::ScoreRoll;
 use std::cmp::{max, min};
 use std::fmt;
 
+pub enum CritScore {
+    Critical,
+    Normal(Score),
+    Fail,
+}
+
 pub struct CheckRoll {
     main: Score,
     other: Option<Score>,
@@ -27,6 +33,14 @@ impl CheckRoll {
             modifiers,
         }
     }
+
+    pub fn crit_score(&self) -> CritScore {
+        match self.main {
+            1 => CritScore::Fail,
+            20 => CritScore::Critical,
+            _ => CritScore::Normal(self.score()),
+        }
+    }
 }
 
 impl ScoreRoll for CheckRoll {
@@ -37,7 +51,11 @@ impl ScoreRoll for CheckRoll {
 
 impl fmt::Display for CheckRoll {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.score())
+        match self.crit_score() {
+            CritScore::Critical => write!(f, "Critical"),
+            CritScore::Normal(score) => write!(f, "{}", score),
+            CritScore::Fail => write!(f, "Fail"),
+        }
     }
 }
 
@@ -111,5 +129,31 @@ mod tests {
         assert_eq!(r.score(), 10);;
         assert_eq!(format!("{}", r), "10");
         assert_eq!(format!("{:?}", r), "(12/4)-[2+3]+3");
+    }
+
+    #[test]
+    fn critical() {
+        let r = CheckRoll::new(
+            &Advantage,
+            20,
+            4,
+            DamageRoll::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
+        );
+        assert_eq!(r.score(), 18);;
+        assert_eq!(format!("{}", r), "Critical");
+        assert_eq!(format!("{:?}", r), "(20/4)-[2+3]+3");
+    }
+
+    #[test]
+    fn fail() {
+        let r = CheckRoll::new(
+            &Disadvantage,
+            1,
+            4,
+            DamageRoll::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
+        );
+        assert_eq!(r.score(), -1);;
+        assert_eq!(format!("{}", r), "Fail");
+        assert_eq!(format!("{:?}", r), "(1/4)-[2+3]+3");
     }
 }
