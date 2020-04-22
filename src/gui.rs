@@ -1,7 +1,9 @@
 use iced::{
-    button, Align, Button, Column, Element, HorizontalAlignment, Length, Sandbox, Settings, Text,
+    button, Align, Button, Column, Element, HorizontalAlignment, Length, Row, Sandbox, Settings,
+    Space, Text,
 };
 
+mod style;
 mod expression_box;
 use expression_box::*;
 mod result_box;
@@ -73,17 +75,24 @@ impl Sandbox for Window {
         let add_button = Button::new(
             &mut self.add_button,
             Text::new("+")
+                .size(35)
                 .horizontal_alignment(HorizontalAlignment::Center)
                 .width(Length::Fill),
         )
-        .on_press(Message::AddPressed);
+        .on_press(Message::AddPressed)
+        .style(style::Button::Secondary);
 
         Column::new()
             .padding(20)
             .spacing(20)
             .align_items(Align::Center)
             .push(expressions)
-            .push(add_button.width(Length::Fill))
+            .push(
+                Row::new()
+                    .push(Space::with_width(Length::Fill))
+                    .push(add_button.width(Length::FillPortion(3)))
+                    .push(Space::with_width(Length::Fill)),
+            )
             .push(self.result_box.view())
             .into()
     }

@@ -1,4 +1,5 @@
 //! This module defines the element that is used for entering attacks.
+use crate::gui::style;
 use critfail::{Roll, RollExp, Rollable};
 use iced::{
     button, text_input, Align, Button, Column, Element, Length, Row, Text, TextInput,
@@ -70,14 +71,18 @@ impl ExpressionBox {
                 .size(50)
                 .vertical_alignment(VerticalAlignment::Center),
         )
-        .on_press(ExpressionMessage::RollPressed)
         .height(Length::Units(100))
-        .padding(20);
+        .padding(20)
+        .style(style::Button::Primary)
+        .on_press(ExpressionMessage::RollPressed);
 
         let delete_button = Button::new(
             &mut self.delete_button,
-            Text::new("x").vertical_alignment(VerticalAlignment::Center),
+            Text::new("x")
+                .vertical_alignment(VerticalAlignment::Center)
+                .size(25),
         )
+        .style(style::Button::Secondary)
         .on_press(ExpressionMessage::DeletePressed);
 
         Row::new()
@@ -91,6 +96,7 @@ impl ExpressionBox {
                     .push(roll_box),
             )
             .push(roll_button)
+            .height(Length::Shrink)
             .into()
     }
 
