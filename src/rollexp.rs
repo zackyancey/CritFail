@@ -22,23 +22,32 @@ mod tests {
 
     #[test]
     fn damage_basic() {
-        assert_eq!(parse("2d10"), Ok(RollExp::Damage(vec![D(2, 10)])));
-        assert_eq!(parse("5d6"), Ok(RollExp::Damage(vec![D(5, 6)])));
-        assert_eq!(parse("25d4"), Ok(RollExp::Damage(vec![D(25, 4)])));
+        assert_eq!(parse("2d10"), Ok(RollExp::Damage(Damage(vec![D(2, 10)]))));
+        assert_eq!(parse("5d6"), Ok(RollExp::Damage(Damage(vec![D(5, 6)]))));
+        assert_eq!(parse("25d4"), Ok(RollExp::Damage(Damage(vec![D(25, 4)]))));
     }
 
     #[test]
     fn damage_sum() {
-        assert_eq!(parse("3d4+5"), Ok(RollExp::Damage(vec![D(3, 4), M(5)])));
-        assert_eq!(parse("2d6+4"), Ok(RollExp::Damage(vec![D(2, 6), M(4)])));
-        assert_eq!(parse("3d4-5"), Ok(RollExp::Damage(vec![D(3, 4), M(-5)])));
+        assert_eq!(
+            parse("3d4+5"),
+            Ok(RollExp::Damage(Damage(vec![D(3, 4), M(5)])))
+        );
+        assert_eq!(
+            parse("2d6+4"),
+            Ok(RollExp::Damage(Damage(vec![D(2, 6), M(4)])))
+        );
+        assert_eq!(
+            parse("3d4-5"),
+            Ok(RollExp::Damage(Damage(vec![D(3, 4), M(-5)])))
+        );
         assert_eq!(
             parse("7d6+2d8+9"),
-            Ok(RollExp::Damage(vec![D(7, 6), D(2, 8), M(9)]))
+            Ok(RollExp::Damage(Damage(vec![D(7, 6), D(2, 8), M(9)])))
         );
         assert_eq!(
             parse("2d8-1d4-1+5"),
-            Ok(RollExp::Damage(vec![D(2, 6), M(4)]))
+            Ok(RollExp::Damage(Damage(vec![D(2, 6), M(4)])))
         );
     }
 
@@ -48,21 +57,21 @@ mod tests {
             parse("r"),
             Ok(RollExp::Check(Check {
                 adv: Neutral,
-                modifier: vec![]
+                modifier: Damage(vec![])
             }))
         );
         assert_eq!(
             parse("a"),
             Ok(RollExp::Check(Check {
                 adv: Advantage,
-                modifier: vec![]
+                modifier: Damage(vec![])
             }))
         );
         assert_eq!(
             parse("d"),
             Ok(RollExp::Check(Check {
                 adv: Disadvantage,
-                modifier: vec![]
+                modifier: Damage(vec![])
             }))
         );
     }
@@ -73,7 +82,7 @@ mod tests {
             parse("r+3"),
             Ok(RollExp::Check(Check {
                 adv: Neutral,
-                modifier: vec![M(3)]
+                modifier: Damage(vec![M(3)])
             }))
         );
 
@@ -81,7 +90,7 @@ mod tests {
             parse("d+5"),
             Ok(RollExp::Check(Check {
                 adv: Disadvantage,
-                modifier: vec![M(5)]
+                modifier: Damage(vec![M(5)])
             }))
         );
 
@@ -89,7 +98,7 @@ mod tests {
             parse("a-2"),
             Ok(RollExp::Check(Check {
                 adv: Advantage,
-                modifier: vec![M(-2)]
+                modifier: Damage(vec![M(-2)])
             }))
         );
 
@@ -97,7 +106,7 @@ mod tests {
             parse("r+1d4+2"),
             Ok(RollExp::Check(Check {
                 adv: Disadvantage,
-                modifier: vec![D(1, 4), M(2)]
+                modifier: Damage(vec![D(1, 4), M(2)])
             }))
         );
     }
@@ -108,21 +117,21 @@ mod tests {
             parse("+3"),
             Ok(RollExp::Check(Check {
                 adv: Neutral,
-                modifier: vec![M(3)]
+                modifier: Damage(vec![M(3)])
             }))
         );
         assert_eq!(
             parse("-2"),
             Ok(RollExp::Check(Check {
                 adv: Neutral,
-                modifier: vec![M(-2)]
+                modifier: Damage(vec![M(-2)])
             }))
         );
         assert_eq!(
             parse("-1d4+2"),
             Ok(RollExp::Check(Check {
                 adv: Neutral,
-                modifier: vec![D(1, 4), M(2)]
+                modifier: Damage(vec![D(1, 4), M(2)])
             }))
         );
     }

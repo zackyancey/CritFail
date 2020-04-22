@@ -1,0 +1,158 @@
+use std::error::Error;
+use std::str::FromStr;
+
+use regex::Regex;
+
+use crate::ParseError;
+use crate::{Damage, DamagePart};
+use crate::{Score, Sides};
+
+lazy_static! {
+    static ref DICE_RE: Regex = Regex::new("^(-?)([0-9]+)d([0-9]+)$").unwrap();
+}
+lazy_static! {
+    static ref MODIFIER_RE: Regex = Regex::new("^(-?)([0-9]+)$").unwrap();
+}
+
+impl FromStr for DamagePart {
+    type Err = Box<dyn Error>;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if let Some(cap) = DICE_RE.captures(s) {
+            let sign = if &cap[1] == "-" { -1 } else { 1 };
+            Ok(DamagePart::Dice(
+                cap[2].parse()?,
+                (cap[3].parse::<Sides>()?) * sign,
+            ))
+        } else if let Some(cap) = MODIFIER_RE.captures(s) {
+            let sign = if &cap[1] == "-" { -1 } else { 1 };
+            Ok(DamagePart::Modifier(cap[2].parse::<Score>()? * sign))
+        } else {
+            Err(Box::new(ParseError::new(s)))
+        }
+    }
+}
+
+impl FromStr for Damage {
+    type Err = Box<dyn Error>;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut i = 0;
+        let mut result = vec![];
+
+        while i < s.len() {
+            // Grab everything up to the next +/-, and see if it's a DamagePart
+            let end = s[i + 1..]
+                .find(|c: char| c == '+' || c == '-')
+                .map(|n| (i + 1) + n)
+                .unwrap_or(s.len());
+
+            let part: DamagePart = s[i..end].parse()?;
+            result.push(part);
+
+            // Update the index
+            i = end;
+
+            // If we stopped on a +, skip it
+            if s[i..].starts_with("+") {
+                i += 1;
+            }
+        }
+
+        Ok(Damage(result))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    mod parse_DamagePart {
+        use super::*;
+        #[test]
+        fn simple_damage() {
+            let d: DamagePart = "2d8".parse().unwrap();
+            assert_eq!(d, DamagePart::Dice(2, 8));
+
+            let d: DamagePart = "1d12".parse().unwrap();
+            assert_eq!(d, DamagePart::Dice(1, 12));
+
+            let d: DamagePart = "3d6".parse().unwrap();
+            assert_eq!(d, DamagePart::Dice(3, 6));
+
+            let d: DamagePart = "421d314159".parse().unwrap();
+            assert_eq!(d, DamagePart::Dice(421, 314159));
+        }
+
+        #[test]
+        fn negative_damage() {
+            let d: DamagePart = "-2d8".parse().unwrap();
+            assert_eq!(d, DamagePart::Dice(2, -8));
+
+            let d: DamagePart = "-1d12".parse().unwrap();
+            assert_eq!(d, DamagePart::Dice(1, -12));
+
+            let d: DamagePart = "-3d6".parse().unwrap();
+            assert_eq!(d, DamagePart::Dice(3, -6));
+
+            let d: DamagePart = "-421d314159".parse().unwrap();
+            assert_eq!(d, DamagePart::Dice(421, -314159));
+        }
+
+        #[test]
+        fn modifier() {
+            let d: DamagePart = "4".parse().unwrap();
+            assert_eq!(d, DamagePart::Modifier(4));
+
+            let d: DamagePart = "-3".parse().unwrap();
+            assert_eq!(d, DamagePart::Modifier(-3));
+
+            let d: DamagePart = "26".parse().unwrap();
+            assert_eq!(d, DamagePart::Modifier(26));
+
+            let d: DamagePart = "-129".parse().unwrap();
+            assert_eq!(d, DamagePart::Modifier(-129));
+        }
+
+        #[test]
+        fn invalid() {
+            assert!("2q4".parse::<DamagePart>().is_err());
+            assert!("d20".parse::<DamagePart>().is_err());
+            assert!("r+3".parse::<DamagePart>().is_err());
+            assert!("d-3".parse::<DamagePart>().is_err());
+            assert!("d".parse::<DamagePart>().is_err());
+            assert!("".parse::<DamagePart>().is_err());
+            assert!("2d6+3".parse::<DamagePart>().is_err());
+        }
+
+    }
+
+    mod parse_Damage {
+        use super::*;
+        use DamagePart::Dice as D;
+        use DamagePart::Modifier as M;
+
+        #[test]
+        fn normal_damage() {
+            let d: Damage = "2d6+3".parse().unwrap();
+            assert_eq!(d, Damage(vec![D(2, 6), M(3)]));
+
+            let d: Damage = "8d4-4".parse().unwrap();
+            assert_eq!(d, Damage(vec![D(8, 4), M(-4)]));
+
+            let d: Damage = "-2d8+3".parse().unwrap();
+            assert_eq!(d, Damage(vec![D(2, -8), M(3)]));
+
+            let d: Damage = "3d12+3d6-1d4+2-3".parse().unwrap();
+            assert_eq!(d, Damage(vec![D(3, 12), D(3, 6), D(1, -4), M(2), M(-3)]));
+        }
+
+        #[test]
+        fn invalid() {
+            assert!("+3d6".parse::<Damage>().is_err());
+            assert!("3d6+2q".parse::<Damage>().is_err());
+            assert!("3d6-2q".parse::<Damage>().is_err());
+            assert!("3d6++4".parse::<Damage>().is_err());
+        }
+    }
+}
