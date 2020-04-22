@@ -8,3 +8,5 @@ edition = "2018"
 
 [dependencies]
 rand="*"
+regex = "*"
+lazy_static = "1.4.0"

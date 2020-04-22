@@ -1,13 +1,18 @@
+#[macro_use]
+extern crate lazy_static;
+
 use std::fmt;
 
 pub use attack::*;
 pub use check::*;
 pub use damage::*;
+pub use error::*;
 pub use rollexp::*;
 
 mod attack;
 mod check;
 mod damage;
+mod error;
 mod rollexp;
 mod util;
 
