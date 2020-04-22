@@ -1,3 +1,5 @@
+use std::fmt;
+
 use rand::Rng;
 
 mod damage;
@@ -14,7 +16,11 @@ pub type Score = i32;
 /// Represents an object that defines a set of dice that can be rolled
 /// to get a result.
 pub trait Rollable {
-    type Roll: DisplayRoll;
+    /// The roll result type should implement both Display and Debug.
+    /// Display should print out a consise result for the roll, and
+    /// Debug should print out the details (eg the value for each rolled
+    /// die)
+    type Roll: fmt::Display + fmt::Debug;
 
     fn roll(&self) -> Self::Roll;
 }
@@ -23,13 +29,4 @@ pub trait Rollable {
 /// score.
 pub trait ScoreRoll {
     fn score(&self) -> Score;
-}
-
-/// All rolls should implement this trait, which is used to display the
-/// result
-pub trait DisplayRoll {
-    // TODO: Document these functions
-    // TODO: Maybe just replace this with Display/Debug? Or auto-implement Display/Debug
-    fn display_score(&self) -> String;
-    fn display_parts(&self) -> String;
 }

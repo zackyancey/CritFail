@@ -1,5 +1,5 @@
-use crate::{Damage, Check, Attack};
 use crate::DamagePart;
+use crate::{Attack, Check, Damage};
 
 #[derive(PartialEq, Debug)]
 pub enum RollExp {
@@ -8,17 +8,17 @@ pub enum RollExp {
     Attack(Attack),
 }
 
-// TODO: Make this RollExp::from_str() or ::from::<&str>
+// TODO: make this an impl FromStr for RollExp
 pub fn parse(e: &str) -> Result<RollExp, ()> {
     Ok(RollExp::Damage(vec![DamagePart::Dice(2, 10)]))
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::check::AdvState::*;
     use crate::DamagePart::Dice as D;
     use crate::DamagePart::Modifier as M;
-    use super::*;
 
     #[test]
     fn damage_basic() {

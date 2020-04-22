@@ -1,12 +1,13 @@
+use std::fmt;
+
+use crate::Rollable;
 use crate::{Check, CheckRoll, Damage, DamageRoll};
-use crate::{Rollable, DisplayRoll};
 
 #[derive(PartialEq, Debug)]
 pub struct Attack {
     pub check: Check,
     pub damage: Damage,
 }
-
 
 impl Rollable for Attack {
     type Roll = AttackRoll;
@@ -16,19 +17,19 @@ impl Rollable for Attack {
     }
 }
 
-
 pub struct AttackRoll {
     pub check: CheckRoll,
     pub damage: DamageRoll,
 }
 
-
-impl DisplayRoll for AttackRoll {
-    fn display_score(&self) -> String {
+impl fmt::Display for AttackRoll {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         unimplemented!()
     }
+}
 
-    fn display_parts(&self) -> String {
+impl fmt::Debug for AttackRoll {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         unimplemented!()
     }
 }

@@ -1,6 +1,7 @@
-use crate::{Damage, Score};
-use crate::{Rollable, ScoreRoll, DisplayRoll};
+use std::fmt;
 
+use crate::{Damage, Score};
+use crate::{Rollable, ScoreRoll};
 
 /// The advantage state of an ability check
 #[derive(PartialEq, Debug)]
@@ -26,7 +27,7 @@ impl Rollable for Check {
 
 pub struct CheckRoll {
     score: Score,
-    other: Option<Score>
+    other: Option<Score>,
 }
 
 impl ScoreRoll for CheckRoll {
@@ -35,12 +36,14 @@ impl ScoreRoll for CheckRoll {
     }
 }
 
-impl DisplayRoll for CheckRoll {
-    fn display_score(&self) -> String {
+impl fmt::Display for CheckRoll {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         unimplemented!()
     }
+}
 
-    fn display_parts(&self) -> String {
+impl fmt::Debug for CheckRoll {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         unimplemented!()
     }
 }
