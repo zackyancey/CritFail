@@ -1,6 +1,6 @@
 use iced::{
-    button, Align, Button, Column, Element, HorizontalAlignment, Length, Row, Sandbox, Settings,
-    Space, Text,
+    button, scrollable, Align, Button, Column, Element, HorizontalAlignment, Length, Row, Sandbox,
+    Scrollable, Settings, Space, Text,
 };
 
 mod expression_box;
@@ -17,6 +17,7 @@ pub fn run() {
 struct Window {
     /// Entries for roll expressions
     expressions: Vec<ExpressionBox>,
+    expressions_scroll: scrollable::State,
     /// Button to add an expression box
     add_button: button::State,
     /// The result of the last roll
@@ -86,14 +87,18 @@ impl Sandbox for Window {
             .padding(20)
             .spacing(20)
             .align_items(Align::Center)
-            .push(expressions)
-            .push(
-                Row::new()
-                    .push(Space::with_width(Length::Fill))
-                    .push(add_button.width(Length::FillPortion(3)))
-                    .push(Space::with_width(Length::Fill)),
-            )
             .push(self.result_box.view())
+            .push(
+                Scrollable::new(&mut self.expressions_scroll)
+                    .spacing(20)
+                    .push(expressions)
+                    .push(
+                        Row::new()
+                            .push(Space::with_width(Length::Fill))
+                            .push(add_button.width(Length::FillPortion(3)))
+                            .push(Space::with_width(Length::Fill)),
+                    ),
+            )
             .into()
     }
 }

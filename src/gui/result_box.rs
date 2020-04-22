@@ -1,6 +1,6 @@
 use super::ExpressionBox;
 use critfail::Roll;
-use iced::{Align, Column, Element, HorizontalAlignment, Length, Row, Space, Text};
+use iced::{Align, Color, Column, Element, HorizontalAlignment, Length, Row, Space, Text};
 
 #[derive(Clone)]
 pub(super) struct ResultBox {
@@ -12,7 +12,7 @@ pub(super) struct ResultBox {
 impl Default for ResultBox {
     fn default() -> Self {
         Self {
-            name: Default::default(),
+            name: "Enter something to roll in the boxes below and click 'roll'".into(),
             expression: Default::default(),
             result: Err(Default::default()),
         }
@@ -73,7 +73,11 @@ impl ResultBox {
                 .width(Length::Fill)
                 .align_items(Align::Center)
                 .push(Text::new(format!("{}", roll)).size(50))
-                .push(Text::new(format!("{:?}", roll)).size(25)),
+                .push(
+                    Text::new(format!("{:?}", roll))
+                        .size(25)
+                        .color(Color::from_rgb(0.6, 0.6, 0.6)),
+                ),
             Err(err) => Column::new().push(Text::new(err).size(50)),
         };
 
@@ -83,6 +87,7 @@ impl ResultBox {
             .align_items(Align::Center)
             .push(title_bar)
             .push(result_section)
+            .height(Length::Units(160))
             .into()
     }
 }
