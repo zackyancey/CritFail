@@ -5,8 +5,8 @@ use crate::RollExpression;
 
 pub use checkoutcome::*;
 
-mod checkparse;
 mod checkoutcome;
+mod checkparse;
 
 /// The advantage state of an ability check
 #[derive(PartialEq, Debug, Clone)]

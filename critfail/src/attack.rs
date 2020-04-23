@@ -4,8 +4,8 @@ use crate::{Check, Damage};
 
 pub use attackoutcome::*;
 
-mod attackparse;
 mod attackoutcome;
+mod attackparse;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Attack {

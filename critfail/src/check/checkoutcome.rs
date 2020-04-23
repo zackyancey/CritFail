@@ -2,7 +2,6 @@ use crate::AdvState;
 use crate::AdvState::*;
 use crate::DamageOutcome;
 use crate::Score;
-use crate::ScoreRoll;
 use std::cmp::{max, min};
 use std::fmt;
 
@@ -34,18 +33,16 @@ impl CheckOutcome {
         }
     }
 
+    pub fn score(&self) -> Score {
+        self.main + self.modifiers.score()
+    }
+
     pub fn crit_score(&self) -> CritScore {
         match self.main {
             1 => CritScore::Fail,
             20 => CritScore::Critical,
             _ => CritScore::Normal(self.score()),
         }
-    }
-}
-
-impl ScoreRoll for CheckOutcome {
-    fn score(&self) -> Score {
-        self.main + self.modifiers.score()
     }
 }
 

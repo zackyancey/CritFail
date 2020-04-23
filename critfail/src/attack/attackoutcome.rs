@@ -12,6 +12,14 @@ impl AttackOutcome {
     pub fn new(check: CheckOutcome, damage: DamageOutcome) -> AttackOutcome {
         AttackOutcome { check, damage }
     }
+
+    pub fn check(&self) -> &CheckOutcome {
+        &self.check
+    }
+
+    pub fn damage(&self) -> &DamageOutcome {
+        &self.damage
+    }
 }
 
 impl fmt::Display for AttackOutcome {

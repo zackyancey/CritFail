@@ -40,9 +40,3 @@ pub trait RollExpression: Sized {
     // TODO: Add an error type for parsing rollexps
     // TODO: Add with_options() and builder() methods.
 }
-
-/// Used for outcomes that can be boiled down to a single numerical score.
-// TODO: Maybe get rid of this trait.
-pub trait ScoreRoll {
-    fn score(&self) -> Score;
-}
