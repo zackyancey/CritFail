@@ -1,0 +1,13 @@
+[package]
+name = "critfail"
+version = "0.2.0"
+authors = ["Zack Yancey <mail@zackyancey.com>"]
+edition = "2018"
+repository = "https://github.com/zackyancey/CritFail"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rand = { version = "0.7", features = ["wasm-bindgen"] }
+regex = "1"
+lazy_static = "1.4.0"

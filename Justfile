@@ -1,3 +1,5 @@
+app_package := "critfail-app"
+
 web-run:
 	just web-build
 	(sleep 1 && xdg-open http://localhost:8000)&
@@ -9,14 +11,14 @@ web-serve:
 web-build:
 	cargo fmt
 	cargo build --target wasm32-unknown-unknown
-	wasm-bindgen ./target/wasm32-unknown-unknown/debug/critfail.wasm --out-dir web/build --web
+	wasm-bindgen ./target/wasm32-unknown-unknown/debug/{{app_package}}.wasm --out-dir web/build --web
 
 web-release:
 	cargo fmt
 	cargo build --target wasm32-unknown-unknown --release --no-default-features --features gui
 	rm -rf ./web/build
-	wasm-bindgen ./target/wasm32-unknown-unknown/release/critfail.wasm --out-dir web/build --web
-	wasm-opt -Oz web/build/critfail_bg.wasm -o web/build/critfail_bg.wasm
+	wasm-bindgen ./target/wasm32-unknown-unknown/release/{{app_package}}.wasm --out-dir web/build --web
+	wasm-opt -Oz web/build/critfail_bg.wasm -o web/build/app_package_bg.wasm
 
 web-deploy: web-release
 	echo rm -vrI $CRITFAIL_SERVER_DIR
