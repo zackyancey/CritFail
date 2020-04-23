@@ -22,7 +22,6 @@ impl FromStr for RollExp {
 // TODO: Fix these tests for new format
 #[cfg(test)]
 mod tests {
-    use crate::check::AdvState::*;
     use crate::DamagePart::Dice as D;
     use crate::DamagePart::Modifier as M;
     use crate::*;
@@ -71,24 +70,15 @@ mod tests {
     fn check_basic() {
         assert_eq!(
             "r".parse::<RollExp>().unwrap(),
-            RollExp::Check(Check {
-                adv: Neutral,
-                modifier: Damage(vec![])
-            })
+            RollExp::Check(Check::new("r").unwrap())
         );
         assert_eq!(
             "a".parse::<RollExp>().unwrap(),
-            RollExp::Check(Check {
-                adv: Advantage,
-                modifier: Damage(vec![])
-            })
+            RollExp::Check(Check::new("a").unwrap())
         );
         assert_eq!(
             "d".parse::<RollExp>().unwrap(),
-            RollExp::Check(Check {
-                adv: Disadvantage,
-                modifier: Damage(vec![])
-            })
+            RollExp::Check(Check::new("d").unwrap())
         );
     }
 
@@ -96,34 +86,22 @@ mod tests {
     fn check_modifiers() {
         assert_eq!(
             "r+3".parse::<RollExp>().unwrap(),
-            RollExp::Check(Check {
-                adv: Neutral,
-                modifier: Damage(vec![M(3)])
-            })
+            RollExp::Check(Check::new("r+3").unwrap())
         );
 
         assert_eq!(
             "d+5".parse::<RollExp>().unwrap(),
-            RollExp::Check(Check {
-                adv: Disadvantage,
-                modifier: Damage(vec![M(5)])
-            })
+            RollExp::Check(Check::new("d+5").unwrap())
         );
 
         assert_eq!(
             "a-2".parse::<RollExp>().unwrap(),
-            RollExp::Check(Check {
-                adv: Advantage,
-                modifier: Damage(vec![M(-2)])
-            })
+            RollExp::Check(Check::new("a-2").unwrap())
         );
 
         assert_eq!(
             "r+1d4+2".parse::<RollExp>().unwrap(),
-            RollExp::Check(Check {
-                adv: Neutral,
-                modifier: Damage(vec![D(1, 4), M(2)])
-            })
+            RollExp::Check(Check::new("r+1d4+2").unwrap())
         );
     }
 
@@ -131,24 +109,15 @@ mod tests {
     fn check_inferred() {
         assert_eq!(
             "+3".parse::<RollExp>().unwrap(),
-            RollExp::Check(Check {
-                adv: Neutral,
-                modifier: Damage(vec![M(3)])
-            })
+            RollExp::Check(Check::new("+3").unwrap())
         );
         assert_eq!(
             "-2".parse::<RollExp>().unwrap(),
-            RollExp::Check(Check {
-                adv: Neutral,
-                modifier: Damage(vec![M(-2)])
-            })
+            RollExp::Check(Check::new("-2").unwrap())
         );
         assert_eq!(
             "-1d4+2".parse::<RollExp>().unwrap(),
-            RollExp::Check(Check {
-                adv: Neutral,
-                modifier: Damage(vec![D(1, -4), M(2)])
-            })
+            RollExp::Check(Check::new("-1d4+2").unwrap())
         );
     }
 
@@ -156,46 +125,22 @@ mod tests {
     fn attacks() {
         assert_eq!(
             "+3?2d8-1".parse::<RollExp>().unwrap(),
-            RollExp::Attack(Attack {
-                check: Check {
-                    adv: Neutral,
-                    modifier: Damage(vec![M(3)])
-                },
-                damage: Damage(vec![D(2, 8), M(-1)])
-            })
+            RollExp::Attack(Attack::new("+3?2d8-1").unwrap())
         );
 
         assert_eq!(
             "a-1?2d8+1".parse::<RollExp>().unwrap(),
-            RollExp::Attack(Attack {
-                check: Check {
-                    adv: Advantage,
-                    modifier: Damage(vec![M(-1)])
-                },
-                damage: Damage(vec![D(2, 8), M(1)])
-            })
+            RollExp::Attack(Attack::new("a-1?2d8+1").unwrap())
         );
 
         assert_eq!(
             "r+8?3d10+2".parse::<RollExp>().unwrap(),
-            RollExp::Attack(Attack {
-                check: Check {
-                    adv: Neutral,
-                    modifier: Damage(vec![M(8)])
-                },
-                damage: Damage(vec![D(3, 10), M(2)])
-            })
+            RollExp::Attack(Attack::new("r+8?3d10+2").unwrap())
         );
 
         assert_eq!(
             "a+1d4+3-1?1d4+4d6+2-1d4".parse::<RollExp>().unwrap(),
-            RollExp::Attack(Attack {
-                check: Check {
-                    adv: Advantage,
-                    modifier: Damage(vec![D(1, 4), M(3), M(-1)])
-                },
-                damage: Damage(vec![D(1, 4), D(4, 6), M(2), D(1, -4)])
-            })
+            RollExp::Attack(Attack::new("a+1d4+3-1?1d4+4d6+2-1d4").unwrap())
         );
     }
 

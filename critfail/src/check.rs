@@ -1,7 +1,7 @@
 use rand::Rng;
 
 use crate::Damage;
-use crate::Rollable;
+use crate::RollExpression;
 
 pub use checkroll::*;
 
@@ -18,14 +18,18 @@ pub enum AdvState {
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Check {
-    pub adv: AdvState,
-    pub modifier: Damage,
+    adv: AdvState,
+    modifier: Damage,
 }
 
-impl Rollable for Check {
-    type Roll = CheckRoll;
+impl RollExpression for Check {
+    type Outcome = CheckRoll;
 
-    fn roll(&self) -> Self::Roll {
+    fn new(expression: &str) -> Result<Self, ()> {
+        expression.parse().map_err(|_| ())
+    }
+
+    fn roll(&self) -> Self::Outcome {
         let r1 = rand::thread_rng().gen_range(1, 21);
         let r2 = rand::thread_rng().gen_range(1, 21);
         let mods = self.modifier.roll();

@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use crate::Rollable;
+use crate::RollExpression;
 use crate::{Score, Sides};
 
 mod damageparse;
@@ -37,18 +37,26 @@ impl Damage {
     }
 }
 
-impl Rollable for Damage {
-    type Roll = DamageRoll;
+impl RollExpression for Damage {
+    type Outcome = DamageRoll;
 
-    fn roll(&self) -> Self::Roll {
+    fn new(expression: &str) -> Result<Self, ()> {
+        expression.parse().map_err(|_| ())
+    }
+
+    fn roll(&self) -> Self::Outcome {
         DamageRoll::new(self.0.iter().map(|part| part.roll()).collect())
     }
 }
 
-impl Rollable for DamagePart {
-    type Roll = damageroll::DamageRollPart;
+impl RollExpression for DamagePart {
+    type Outcome = damageroll::DamageRollPart;
 
-    fn roll(&self) -> Self::Roll {
+    fn new(expression: &str) -> Result<Self, ()> {
+        expression.parse().map_err(|_| ())
+    }
+
+    fn roll(&self) -> Self::Outcome {
         match self {
             DamagePart::Dice(num, sides) => {
                 let rolls: Vec<Score> = (0..*num)

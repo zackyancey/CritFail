@@ -1,4 +1,4 @@
-use crate::Rollable;
+use crate::RollExpression;
 use crate::{Attack, Check, Damage};
 
 pub use roll::*;
@@ -13,10 +13,14 @@ pub enum RollExp {
     Attack(Attack),
 }
 
-impl Rollable for RollExp {
-    type Roll = Roll;
+impl RollExpression for RollExp {
+    type Outcome = Roll;
 
-    fn roll(&self) -> Self::Roll {
+    fn new(expression: &str) -> Result<Self, ()> {
+        expression.parse().map_err(|_| ())
+    }
+
+    fn roll(&self) -> Self::Outcome {
         match self {
             RollExp::Check(c) => Roll::CheckRoll(c.roll()),
             RollExp::Damage(d) => Roll::DamageRoll(d.roll()),

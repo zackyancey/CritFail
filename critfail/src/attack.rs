@@ -1,5 +1,5 @@
 use crate::CritScore;
-use crate::Rollable;
+use crate::RollExpression;
 use crate::{Check, Damage};
 
 pub use attackroll::*;
@@ -13,10 +13,14 @@ pub struct Attack {
     pub damage: Damage,
 }
 
-impl Rollable for Attack {
-    type Roll = AttackRoll;
+impl RollExpression for Attack {
+    type Outcome = AttackRoll;
 
-    fn roll(&self) -> Self::Roll {
+    fn new(expression: &str) -> Result<Self, ()> {
+        expression.parse().map_err(|_| ())
+    }
+
+    fn roll(&self) -> Self::Outcome {
         let check = self.check.roll();
 
         let damage = if let CritScore::Critical = check.crit_score() {

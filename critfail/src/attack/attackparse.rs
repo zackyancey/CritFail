@@ -27,20 +27,16 @@ impl FromStr for Attack {
 mod tests {
     use super::*;
 
-    use crate::AdvState::*;
     use crate::DamagePart::Dice as D;
     use crate::DamagePart::Modifier as M;
-    use crate::{Check, Damage};
+    use crate::{Check, Damage, RollExpression};
 
     #[test]
     fn inferred_r() {
         assert_eq!(
             "+3?2d8-1".parse::<Attack>().unwrap(),
             Attack {
-                check: Check {
-                    adv: Neutral,
-                    modifier: Damage(vec![M(3)])
-                },
+                check: Check::new("r+3").unwrap(),
                 damage: Damage(vec![D(2, 8), M(-1)])
             }
         )
@@ -51,10 +47,7 @@ mod tests {
         assert_eq!(
             "a-1?2d8+1".parse::<Attack>().unwrap(),
             Attack {
-                check: Check {
-                    adv: Advantage,
-                    modifier: Damage(vec![M(-1)])
-                },
+                check: Check::new("a-1").unwrap(),
                 damage: Damage(vec![D(2, 8), M(1)])
             }
         )
@@ -65,10 +58,7 @@ mod tests {
         assert_eq!(
             "r+8?3d10+2".parse::<Attack>().unwrap(),
             Attack {
-                check: Check {
-                    adv: Neutral,
-                    modifier: Damage(vec![M(8)])
-                },
+                check: Check::new("r+8").unwrap(),
                 damage: Damage(vec![D(3, 10), M(2)])
             }
         )
@@ -79,10 +69,7 @@ mod tests {
         assert_eq!(
             "d+1d4+3-1?1d4+4d6+2-1d4".parse::<Attack>().unwrap(),
             Attack {
-                check: Check {
-                    adv: Disadvantage,
-                    modifier: Damage(vec![D(1, 4), M(3), M(-1)])
-                },
+                check: Check::new("d+1d4+3-1").unwrap(),
                 damage: Damage(vec![D(1, 4), D(4, 6), M(2), D(1, -4)])
             }
         )
