@@ -4,9 +4,9 @@ use crate::RollExpression;
 use crate::{Score, Sides};
 
 mod damageparse;
-mod damageroll;
+mod damageoutcome;
 
-pub use damageroll::*;
+pub use damageoutcome::*;
 
 #[derive(PartialEq, Debug, Clone)]
 pub enum DamagePart {
@@ -18,7 +18,7 @@ pub enum DamagePart {
 pub struct Damage(pub Vec<DamagePart>);
 
 impl Damage {
-    pub fn crit_roll(&self) -> DamageRoll {
+    pub fn crit_roll(&self) -> DamageOutcome {
         let mut result = Vec::new();
 
         for part in &self.0 {
@@ -33,24 +33,24 @@ impl Damage {
             }
         }
 
-        DamageRoll::new(result)
+        DamageOutcome::new(result)
     }
 }
 
 impl RollExpression for Damage {
-    type Outcome = DamageRoll;
+    type Outcome = DamageOutcome;
 
     fn new(expression: &str) -> Result<Self, ()> {
         expression.parse().map_err(|_| ())
     }
 
     fn roll(&self) -> Self::Outcome {
-        DamageRoll::new(self.0.iter().map(|part| part.roll()).collect())
+        DamageOutcome::new(self.0.iter().map(|part| part.roll()).collect())
     }
 }
 
 impl RollExpression for DamagePart {
-    type Outcome = damageroll::DamageRollPart;
+    type Outcome = damageoutcome::DamageOutcomePart;
 
     fn new(expression: &str) -> Result<Self, ()> {
         expression.parse().map_err(|_| ())
@@ -63,10 +63,10 @@ impl RollExpression for DamagePart {
                     .map(|_| rand::thread_rng().gen_range(1, sides.abs() + 1))
                     .collect();
 
-                DamageRollPart::Dice(*sides, rolls)
+                DamageOutcomePart::Dice(*sides, rolls)
             }
 
-            DamagePart::Modifier(value) => DamageRollPart::Modifier(*value),
+            DamagePart::Modifier(value) => DamageOutcomePart::Modifier(*value),
         }
     }
 }

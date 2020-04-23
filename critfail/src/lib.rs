@@ -11,13 +11,13 @@ pub use attack::*;
 pub use check::*;
 pub use damage::*;
 pub use error::*;
-pub use rollexp::*;
+pub use roll::*;
 
 mod attack;
 mod check;
 mod damage;
 mod error;
-mod rollexp;
+mod roll;
 mod util;
 
 pub type Score = i32;

@@ -2,10 +2,10 @@ use crate::CritScore;
 use crate::RollExpression;
 use crate::{Check, Damage};
 
-pub use attackroll::*;
+pub use attackoutcome::*;
 
 mod attackparse;
-mod attackroll;
+mod attackoutcome;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Attack {
@@ -14,7 +14,7 @@ pub struct Attack {
 }
 
 impl RollExpression for Attack {
-    type Outcome = AttackRoll;
+    type Outcome = AttackOutcome;
 
     fn new(expression: &str) -> Result<Self, ()> {
         expression.parse().map_err(|_| ())
@@ -29,6 +29,6 @@ impl RollExpression for Attack {
             self.damage.roll()
         };
 
-        AttackRoll::new(check, damage)
+        AttackOutcome::new(check, damage)
     }
 }

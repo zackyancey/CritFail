@@ -1,20 +1,20 @@
 use crate::RollExpression;
 use crate::{Attack, Check, Damage};
 
-pub use roll::*;
+pub use rolloutcome::*;
 
-mod roll;
-mod rollexpparse;
+mod rolloutcome;
+mod rollparse;
 
 #[derive(PartialEq, Debug, Clone)]
-pub enum RollExp {
+pub enum Roll {
     Check(Check),
     Damage(Damage),
     Attack(Attack),
 }
 
-impl RollExpression for RollExp {
-    type Outcome = Roll;
+impl RollExpression for Roll {
+    type Outcome = RollOutcome;
 
     fn new(expression: &str) -> Result<Self, ()> {
         expression.parse().map_err(|_| ())
@@ -22,9 +22,9 @@ impl RollExpression for RollExp {
 
     fn roll(&self) -> Self::Outcome {
         match self {
-            RollExp::Check(c) => Roll::CheckRoll(c.roll()),
-            RollExp::Damage(d) => Roll::DamageRoll(d.roll()),
-            RollExp::Attack(a) => Roll::AttackRoll(a.roll()),
+            Roll::Check(c) => RollOutcome::CheckOutcome(c.roll()),
+            Roll::Damage(d) => RollOutcome::DamageOutcome(d.roll()),
+            Roll::Attack(a) => RollOutcome::AttackOutcome(a.roll()),
         }
     }
 }

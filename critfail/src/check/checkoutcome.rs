@@ -1,6 +1,6 @@
 use crate::AdvState;
 use crate::AdvState::*;
-use crate::DamageRoll;
+use crate::DamageOutcome;
 use crate::Score;
 use crate::ScoreRoll;
 use std::cmp::{max, min};
@@ -13,21 +13,21 @@ pub enum CritScore {
 }
 
 #[derive(Clone)]
-pub struct CheckRoll {
+pub struct CheckOutcome {
     main: Score,
     other: Option<Score>,
-    modifiers: DamageRoll,
+    modifiers: DamageOutcome,
 }
 
-impl CheckRoll {
-    pub fn new(adv: &AdvState, r1: Score, r2: Score, modifiers: DamageRoll) -> CheckRoll {
+impl CheckOutcome {
+    pub fn new(adv: &AdvState, r1: Score, r2: Score, modifiers: DamageOutcome) -> CheckOutcome {
         let (main, other) = match adv {
             Advantage => (max(r1, r2), Some(min(r1, r2))),
             Disadvantage => (min(r1, r2), Some(max(r1, r2))),
             Neutral => (r1, None),
         };
 
-        CheckRoll {
+        CheckOutcome {
             main,
             other,
             modifiers,
@@ -43,13 +43,13 @@ impl CheckRoll {
     }
 }
 
-impl ScoreRoll for CheckRoll {
+impl ScoreRoll for CheckOutcome {
     fn score(&self) -> Score {
         self.main + self.modifiers.score()
     }
 }
 
-impl fmt::Display for CheckRoll {
+impl fmt::Display for CheckOutcome {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self.crit_score() {
             CritScore::Critical => write!(f, "Critical"),
@@ -59,7 +59,7 @@ impl fmt::Display for CheckRoll {
     }
 }
 
-impl fmt::Debug for CheckRoll {
+impl fmt::Debug for CheckOutcome {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if let Some(other) = self.other {
             write!(f, "({}/{})", self.main, other)?
@@ -83,12 +83,12 @@ impl fmt::Debug for CheckRoll {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::DamageRollPart::Dice as Dr;
-    use crate::DamageRollPart::Modifier as Mr;
+    use crate::DamageOutcomePart::Dice as Dr;
+    use crate::DamageOutcomePart::Modifier as Mr;
 
     #[test]
     fn neutral() {
-        let r = CheckRoll::new(&Neutral, 10, 16, DamageRoll::new(vec![]));
+        let r = CheckOutcome::new(&Neutral, 10, 16, DamageOutcome::new(vec![]));
         assert_eq!(r.score(), 10);
         assert_eq!(format!("{}", r), "10");
         assert_eq!(format!("{:?}", r), "(10)");
@@ -96,7 +96,7 @@ mod tests {
 
     #[test]
     fn advantage() {
-        let r = CheckRoll::new(&Advantage, 8, 15, DamageRoll::new(vec![]));
+        let r = CheckOutcome::new(&Advantage, 8, 15, DamageOutcome::new(vec![]));
         assert_eq!(r.score(), 15);
         assert_eq!(format!("{}", r), "15");
         assert_eq!(format!("{:?}", r), "(15/8)");
@@ -104,7 +104,7 @@ mod tests {
 
     #[test]
     fn disadvantage() {
-        let r = CheckRoll::new(&Disadvantage, 12, 7, DamageRoll::new(vec![]));
+        let r = CheckOutcome::new(&Disadvantage, 12, 7, DamageOutcome::new(vec![]));
         assert_eq!(r.score(), 7);
         assert_eq!(format!("{}", r), "7");
         assert_eq!(format!("{:?}", r), "(7/12)");
@@ -112,7 +112,7 @@ mod tests {
 
     #[test]
     fn die_modifier() {
-        let r = CheckRoll::new(&Neutral, 6, 15, DamageRoll::new(vec![Dr(4, vec![1])]));
+        let r = CheckOutcome::new(&Neutral, 6, 15, DamageOutcome::new(vec![Dr(4, vec![1])]));
         assert_eq!(r.score(), 7);
         assert_eq!(format!("{}", r), "7");
         assert_eq!(format!("{:?}", r), "(6)+[1]");
@@ -120,11 +120,11 @@ mod tests {
 
     #[test]
     fn mixed_modifiers() {
-        let r = CheckRoll::new(
+        let r = CheckOutcome::new(
             &Advantage,
             12,
             4,
-            DamageRoll::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
+            DamageOutcome::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
         );
         assert_eq!(r.score(), 10);
         assert_eq!(format!("{}", r), "10");
@@ -133,11 +133,11 @@ mod tests {
 
     #[test]
     fn critical() {
-        let r = CheckRoll::new(
+        let r = CheckOutcome::new(
             &Advantage,
             20,
             4,
-            DamageRoll::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
+            DamageOutcome::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
         );
         assert_eq!(r.score(), 18);
         assert_eq!(format!("{}", r), "Critical");
@@ -146,11 +146,11 @@ mod tests {
 
     #[test]
     fn fail() {
-        let r = CheckRoll::new(
+        let r = CheckOutcome::new(
             &Disadvantage,
             1,
             4,
-            DamageRoll::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
+            DamageOutcome::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
         );
         assert_eq!(r.score(), -1);
         assert_eq!(format!("{}", r), "Fail");

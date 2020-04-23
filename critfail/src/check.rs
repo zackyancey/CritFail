@@ -3,10 +3,10 @@ use rand::Rng;
 use crate::Damage;
 use crate::RollExpression;
 
-pub use checkroll::*;
+pub use checkoutcome::*;
 
 mod checkparse;
-mod checkroll;
+mod checkoutcome;
 
 /// The advantage state of an ability check
 #[derive(PartialEq, Debug, Clone)]
@@ -23,7 +23,7 @@ pub struct Check {
 }
 
 impl RollExpression for Check {
-    type Outcome = CheckRoll;
+    type Outcome = CheckOutcome;
 
     fn new(expression: &str) -> Result<Self, ()> {
         expression.parse().map_err(|_| ())
@@ -33,6 +33,6 @@ impl RollExpression for Check {
         let r1 = rand::thread_rng().gen_range(1, 21);
         let r2 = rand::thread_rng().gen_range(1, 21);
         let mods = self.modifier.roll();
-        CheckRoll::new(&self.adv, r1, r2, mods)
+        CheckOutcome::new(&self.adv, r1, r2, mods)
     }
 }
