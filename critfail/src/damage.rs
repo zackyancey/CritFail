@@ -6,8 +6,9 @@ use crate::{Score, Sides};
 mod damageparse;
 mod damageoutcome;
 
-pub use damageoutcome::*;
+pub use damageoutcome::{DamageOutcome, DamageOutcomePart};
 
+// TODO: DamagePart should not be `pub`
 #[derive(PartialEq, Debug, Clone)]
 pub enum DamagePart {
     Dice(u32, Sides),

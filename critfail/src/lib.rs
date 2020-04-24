@@ -7,18 +7,22 @@ extern crate lazy_static;
 
 use std::fmt;
 
-pub use attack::*;
-pub use check::*;
-pub use damage::*;
-pub use error::*;
-pub use roll::*;
-
 mod attack;
 mod check;
 mod damage;
 mod error;
 mod roll;
 mod util;
+
+pub use roll::{Roll, RollOutcome};
+pub use check::{Check, CheckOutcome, AdvState, CritScore};
+pub use damage::{Damage, DamageOutcome};
+pub use attack::{Attack, AttackOutcome};
+pub use error::ParseError;
+
+// TODO: Replace DamageOutcomePart with a publically-exposable ModifierPart type
+use damage::DamageOutcomePart;
+pub type OutcomePart = DamageOutcomePart;
 
 pub type Score = i32;
 pub type Sides = i32;

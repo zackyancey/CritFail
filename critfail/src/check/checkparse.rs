@@ -35,8 +35,8 @@ impl FromStr for Check {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::DamagePart::Dice as D;
-    use crate::DamagePart::Modifier as M;
+    use crate::damage::DamagePart::Dice as D;
+    use crate::damage::DamagePart::Modifier as M;
     use crate::*;
 
     #[test]

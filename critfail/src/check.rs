@@ -3,7 +3,7 @@ use rand::Rng;
 use crate::Damage;
 use crate::RollExpression;
 
-pub use checkoutcome::*;
+pub use checkoutcome::{CheckOutcome, CritScore};
 
 mod checkoutcome;
 mod checkparse;
@@ -19,6 +19,7 @@ pub enum AdvState {
 #[derive(PartialEq, Debug, Clone)]
 pub struct Check {
     adv: AdvState,
+    // TODO: the modifier should be a Vec<Modifier> instead of a Damage
     modifier: Damage,
 }
 

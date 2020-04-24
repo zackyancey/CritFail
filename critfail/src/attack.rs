@@ -2,7 +2,7 @@ use crate::CritScore;
 use crate::RollExpression;
 use crate::{Check, Damage};
 
-pub use attackoutcome::*;
+pub use attackoutcome::AttackOutcome;
 
 mod attackoutcome;
 mod attackparse;
