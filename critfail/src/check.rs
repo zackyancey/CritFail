@@ -39,6 +39,26 @@ pub struct Check {
     modifier: Damage,
 }
 
+impl Check {
+    /// Roll this check using `adv` to override the advantage state.
+    ///
+    /// ```
+    /// use critfail::{RollExpression, Check, AdvState};
+    /// let check = Check::new("r+3").unwrap();
+    ///
+    /// check.roll(); // Roll without advantage
+    /// check.roll_with_advantage(AdvState::Advantage); // Roll with advantage
+    /// check.roll_with_advantage(AdvState::Neutral); // Roll without advantage
+    /// check.roll_with_advantage(AdvState::Disadvantage); // Roll with disadvantage
+    /// ```
+    pub fn roll_with_advantage(&self, adv: AdvState) -> CheckOutcome {
+        let r1 = rand::thread_rng().gen_range(1, 21);
+        let r2 = rand::thread_rng().gen_range(1, 21);
+        let mods = self.modifier.roll();
+        CheckOutcome::new(adv, r1, r2, mods.into_modifiers().into_inner())
+    }
+}
+
 impl RollExpression for Check {
     type Outcome = CheckOutcome;
 
@@ -47,9 +67,6 @@ impl RollExpression for Check {
     }
 
     fn roll(&self) -> Self::Outcome {
-        let r1 = rand::thread_rng().gen_range(1, 21);
-        let r2 = rand::thread_rng().gen_range(1, 21);
-        let mods = self.modifier.roll();
-        CheckOutcome::new(self.adv, r1, r2, mods.into_modifiers().into_inner())
+        self.roll_with_advantage(self.adv)
     }
 }

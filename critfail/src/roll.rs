@@ -53,7 +53,6 @@ impl RollExpression for Roll {
             Roll::Attack(a) => RollOutcome::AttackOutcome(a.roll()),
         }
     }
-
 }
 
 impl Roll {

@@ -1,6 +1,5 @@
-use crate::CritScore;
 use crate::RollExpression;
-use crate::{Check, Damage};
+use crate::{AdvState, Check, Damage};
 
 pub use attackoutcome::AttackOutcome;
 
@@ -25,6 +24,26 @@ pub struct Attack {
     damage: Damage,
 }
 
+impl Attack {
+    /// Roll this check using `adv` to override the advantage state.
+    ///
+    /// ```
+    /// use critfail::{RollExpression, Attack, AdvState};
+    /// let attack = Attack::new("r+3?3d6+4").unwrap();
+    ///
+    /// attack.roll(); // Roll without advantage
+    /// attack.roll_with_advantage(AdvState::Advantage); // Roll with advantage
+    /// attack.roll_with_advantage(AdvState::Neutral); // Roll without advantage
+    /// attack.roll_with_advantage(AdvState::Disadvantage); // Roll with disadvantage
+    /// ```
+    pub fn roll_with_advantage(&self, adv: AdvState) -> AttackOutcome {
+        let check = self.check.roll_with_advantage(adv);
+        let damage = self.damage.roll_with_check(&check);
+
+        AttackOutcome::new(check, damage)
+    }
+}
+
 impl RollExpression for Attack {
     type Outcome = AttackOutcome;
 
@@ -34,12 +53,7 @@ impl RollExpression for Attack {
 
     fn roll(&self) -> Self::Outcome {
         let check = self.check.roll();
-
-        let damage = if let CritScore::Critical = check.crit_score() {
-            self.damage.crit_roll()
-        } else {
-            self.damage.roll()
-        };
+        let damage = self.damage.roll_with_check(&check);
 
         AttackOutcome::new(check, damage)
     }

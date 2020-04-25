@@ -2,6 +2,7 @@ use rand::Rng;
 
 use crate::OutcomePart;
 use crate::RollExpression;
+use crate::{CheckOutcome, CritScore};
 use crate::{Score, Sides};
 
 mod damageoutcome;
@@ -62,6 +63,19 @@ impl Damage {
         }
 
         DamageOutcome::new(result)
+    }
+
+    /// Roll for damage, doubling if the check was a critical success.
+    pub fn roll_with_check(&self, check: &CheckOutcome) -> DamageOutcome {
+        self.roll_with_score(check.crit_score())
+    }
+
+    /// Roll for damage, doubling if the check was a critical success.
+    pub fn roll_with_score(&self, score: CritScore) -> DamageOutcome {
+        match score {
+            CritScore::Critical => self.crit_roll(),
+            _ => self.roll(),
+        }
     }
 }
 
