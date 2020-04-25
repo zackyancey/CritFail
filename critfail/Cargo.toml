@@ -1,6 +1,6 @@
 [package]
 name = "critfail"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Zack Yancey <mail@zackyancey.com>"]
 edition = "2018"
 repository = "https://github.com/zackyancey/CritFail"
