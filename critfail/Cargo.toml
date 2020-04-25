@@ -8,6 +8,10 @@ repository = "https://github.com/zackyancey/CritFail"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rand = { version = "0.7", features = ["wasm-bindgen"] }
+rand = { version = "0.7" }
 regex = "1"
 lazy_static = "1.4.0"
+
+[features]
+build-outcomes = []
+wasm-bindgen = ["rand/wasm-bindgen"]

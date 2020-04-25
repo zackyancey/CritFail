@@ -40,3 +40,6 @@ run +ARGS="":
 clean:
 	cargo clean
 	rm -rf web/build
+
+test:
+	cd critfail && cargo test --package critfail --features build-outcomes

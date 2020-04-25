@@ -2,7 +2,6 @@ use std::fmt;
 
 use crate::{ModifiersOutcome, OutcomePart, Score};
 
-
 /// The outcome of a check roll.
 ///
 /// This is normally constructed as the result of calling `roll()` on a
@@ -19,21 +18,8 @@ pub struct DamageOutcome {
 }
 
 impl DamageOutcome {
-    /// Create a `DamageOutcome` without rolling an expression.
-    ///
-    /// ```
-    /// use critfail::{AdvState, DamageOutcome, OutcomePart};
-    /// use OutcomePart::{Dice, Modifier};
-    ///
-    /// let outcome = DamageOutcome::new(vec![Dice(6, vec![4,6,1]), Modifier(4)]);
-    ///
-    /// assert_eq!(outcome.score(), 15);
-    /// assert_eq!(
-    ///     format!("{:?}", outcome),
-    ///     "[4+6+1]+4"
-    /// );
-    pub fn new(scores: Vec<OutcomePart>) -> DamageOutcome {
-        DamageOutcome {
+    pub(crate) fn new(scores: Vec<OutcomePart>) -> Self {
+        Self {
             scores: scores.into(),
         }
     }
@@ -46,6 +32,26 @@ impl DamageOutcome {
     // TODO: Get rid of this function once Check isn't using Damage for its rolls anymore.
     pub(crate) fn into_modifiers(self) -> ModifiersOutcome {
         self.scores
+    }
+
+    /// Create a `DamageOutcome` without rolling an expression.
+    ///
+    /// *This function is only available if the [build-outcomes](index.html#features) feature is enabled*
+    ///
+    /// ```
+    /// use critfail::{AdvState, DamageOutcome, OutcomePart};
+    /// use OutcomePart::{Dice, Modifier};
+    ///
+    /// let outcome = DamageOutcome::build(vec![Dice(6, vec![4,6,1]), Modifier(4)]);
+    ///
+    /// assert_eq!(outcome.score(), 15);
+    /// assert_eq!(
+    ///     format!("{:?}", outcome),
+    ///     "[4+6+1]+4"
+    /// );
+    #[cfg(any(doc, feature = "build-outcomes"))]
+    pub fn build(scores: Vec<OutcomePart>) -> Self {
+        Self::new(scores)
     }
 }
 

@@ -19,18 +19,7 @@ pub struct AttackOutcome {
 }
 
 impl AttackOutcome {
-    /// Create an attack outcome without rolling a check.
-    ///
-    /// ```
-    /// use critfail::{DamageOutcome, CheckOutcome, AttackOutcome, AdvState};
-    /// use critfail::OutcomePart::{Dice, Modifier};
-    ///
-    /// let damage = DamageOutcome::new(vec![Dice(6, vec![4,6,1]), Modifier(4)]);
-    /// let check = CheckOutcome::new(AdvState::Neutral, 10, 5, vec![Modifier(4)]);
-    ///
-    /// let outcome = AttackOutcome::new(check, damage);
-    /// ```
-    pub fn new(check: CheckOutcome, damage: DamageOutcome) -> AttackOutcome {
+    pub(crate) fn new(check: CheckOutcome, damage: DamageOutcome) -> Self {
         AttackOutcome { check, damage }
     }
 
@@ -42,6 +31,24 @@ impl AttackOutcome {
     /// Get the damage portion of this `AttackOutcome`.
     pub fn damage(&self) -> &DamageOutcome {
         &self.damage
+    }
+
+    ///  Create an attack outcome without rolling a check.
+    ///
+    /// *This function is only available if the [build-outcomes](index.html#features) feature is enabled*
+    ///
+    /// ```
+    /// use critfail::{DamageOutcome, CheckOutcome, AttackOutcome, AdvState};
+    /// use critfail::OutcomePart::{Dice, Modifier};
+    ///
+    /// let damage = DamageOutcome::build(vec![Dice(6, vec![4,6,1]), Modifier(4)]);
+    /// let check = CheckOutcome::build(AdvState::Neutral, 10, 5, vec![Modifier(4)]);
+    ///
+    /// let outcome = AttackOutcome::build(check, damage);
+    /// ```
+    #[cfg(any(doc, feature = "build-outcomes"))]
+    pub fn build(check: CheckOutcome, damage: DamageOutcome) -> Self {
+        Self::new(check, damage)
     }
 }
 

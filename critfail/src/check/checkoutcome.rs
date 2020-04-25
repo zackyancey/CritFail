@@ -36,29 +36,7 @@ pub struct CheckOutcome {
 }
 
 impl CheckOutcome {
-    /// Create a `CheckOutcome` without rolling an expression.
-    ///
-    /// r1 and r2 represent the two values used for a check roll with
-    /// advantage or disadvantage. If the roll is made with value of
-    /// `AdvState::Neutral` for `adv`, r1 will be used.
-    ///
-    /// ```
-    /// use critfail::{AdvState, CheckOutcome, OutcomePart};
-    ///
-    /// let outcome = CheckOutcome::new(
-    ///     AdvState::Neutral,
-    ///     10,
-    ///     5,
-    ///     vec![OutcomePart::Modifier(4)]
-    /// );
-    ///
-    /// assert_eq!(outcome.score(), 14);
-    /// assert_eq!(
-    ///     format!("{:?}", outcome),
-    ///     "(10)+4"
-    /// );
-    /// ```
-    pub fn new(adv: AdvState, r1: Score, r2: Score, modifiers: Vec<OutcomePart>) -> CheckOutcome {
+    pub(crate) fn new(adv: AdvState, r1: Score, r2: Score, modifiers: Vec<OutcomePart>) -> Self {
         let (main, other) = match adv {
             Advantage => (max(r1, r2), Some(min(r1, r2))),
             Disadvantage => (min(r1, r2), Some(max(r1, r2))),
@@ -82,11 +60,11 @@ impl CheckOutcome {
     /// use critfail::{AdvState, CheckOutcome, OutcomePart};
     ///
     /// // (20)+4
-    /// let critical = CheckOutcome::new(AdvState::Neutral, 20, 1, vec![OutcomePart::Modifier(4)]);
+    /// let critical = CheckOutcome::build(AdvState::Neutral, 20, 1, vec![OutcomePart::Modifier(4)]);
     /// // (16)+4
-    /// let normal = CheckOutcome::new(AdvState::Neutral, 16, 1, vec![OutcomePart::Modifier(4)]);
+    /// let normal = CheckOutcome::build(AdvState::Neutral, 16, 1, vec![OutcomePart::Modifier(4)]);
     /// // (1)+4
-    /// let fail = CheckOutcome::new(AdvState::Neutral, 1, 1, vec![OutcomePart::Modifier(4)]);
+    /// let fail = CheckOutcome::build(AdvState::Neutral, 1, 1, vec![OutcomePart::Modifier(4)]);
     ///
     /// assert_eq!(critical.score(), 24);
     /// assert_eq!(normal.score(), 20);
@@ -102,11 +80,11 @@ impl CheckOutcome {
     /// use critfail::{AdvState, CheckOutcome, OutcomePart, CritScore};
     ///
     /// // (20)+4
-    /// let critical = CheckOutcome::new(AdvState::Neutral, 20, 1, vec![OutcomePart::Modifier(4)]);
+    /// let critical = CheckOutcome::build(AdvState::Neutral, 20, 1, vec![OutcomePart::Modifier(4)]);
     /// // (16)+4
-    /// let normal = CheckOutcome::new(AdvState::Neutral, 16, 1, vec![OutcomePart::Modifier(4)]);
+    /// let normal = CheckOutcome::build(AdvState::Neutral, 16, 1, vec![OutcomePart::Modifier(4)]);
     /// // (1)+4
-    /// let fail = CheckOutcome::new(AdvState::Neutral, 1, 1, vec![OutcomePart::Modifier(4)]);
+    /// let fail = CheckOutcome::build(AdvState::Neutral, 1, 1, vec![OutcomePart::Modifier(4)]);
     ///
     /// assert_eq!(critical.crit_score(), CritScore::Critical);
     /// assert_eq!(normal.crit_score(), CritScore::Normal(20));
@@ -118,6 +96,35 @@ impl CheckOutcome {
             20 => CritScore::Critical,
             _ => CritScore::Normal(self.score()),
         }
+    }
+
+    /// Create a `CheckOutcome` without rolling an expression.
+    ///
+    /// *This function is only available if the [build-outcomes](index.html#features) feature is enabled*
+    ///
+    /// r1 and r2 represent the two values used for a check roll with
+    /// advantage or disadvantage. If the roll is made with value of
+    /// `AdvState::Neutral` for `adv`, r1 will be used.
+    ///
+    /// ```
+    /// use critfail::{AdvState, CheckOutcome, OutcomePart};
+    ///
+    /// let outcome = CheckOutcome::build(
+    ///     AdvState::Neutral,
+    ///     10,
+    ///     5,
+    ///     vec![OutcomePart::Modifier(4)]
+    /// );
+    ///
+    /// assert_eq!(outcome.score(), 14);
+    /// assert_eq!(
+    ///     format!("{:?}", outcome),
+    ///     "(10)+4"
+    /// );
+    /// ```
+    #[cfg(any(doc, feature = "build-outcomes"))]
+    pub fn build(adv: AdvState, r1: Score, r2: Score, modifiers: Vec<OutcomePart>) -> Self {
+        Self::new(adv, r1, r2, modifiers)
     }
 }
 
