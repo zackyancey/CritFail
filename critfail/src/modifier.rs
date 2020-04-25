@@ -2,7 +2,7 @@ use crate::{util, Score, Sides};
 use std::fmt;
 
 /// Internally used wrapper struct for a collection of OutcomeParts.
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub(crate) struct ModifiersOutcome {
     // OPTIMIZE: Cache sum in this struct
     scores: Vec<OutcomePart>,
@@ -39,13 +39,21 @@ impl From<Vec<OutcomePart>> for ModifiersOutcome {
 
 /// Enum representing the different kinds of values that can be returned
 /// for damage or the modifier on a check.
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub enum OutcomePart {
+    /// The result of rolling a set of dice.
+    ///
+    /// For example, If I rolled 3d6 and got a 4, a 2, and a 1, that
+    /// would be `Dice(6, vec![4,2,1])`.
     Dice(Sides, Vec<Score>),
+    /// A constant modifier value.
     Modifier(Score),
 }
 
 impl OutcomePart {
+    /// Get the score of this `OutcomePart`.
+    ///
+    /// Either the sum of the die rolls, or the value of the modifier.
     pub fn score(&self) -> Score {
         match self {
             Self::Dice(sides, d) => {

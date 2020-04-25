@@ -2,12 +2,13 @@ use std::error::Error;
 use std::fmt;
 
 #[derive(Debug)]
+/// Represents an error parsing a roll expression.
 pub struct ParseError {
     details: String,
 }
 
 impl ParseError {
-    pub fn new(msg: &str) -> ParseError {
+    pub(crate) fn new(msg: &str) -> ParseError {
         ParseError {
             details: msg.to_string(),
         }

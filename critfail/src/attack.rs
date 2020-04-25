@@ -7,6 +7,18 @@ pub use attackoutcome::AttackOutcome;
 mod attackoutcome;
 mod attackparse;
 
+/// An attack roll consisting of a check and a damage roll.
+///
+/// ```
+/// use critfail::{RollExpression, Attack};
+///
+/// let atk = Attack::new("r+3?2d8+4").unwrap();
+///
+/// let outcome = atk.roll();
+///
+/// print!("{}", outcome);   // Prints something like "10 ? 13"
+/// print!("{:?}", outcome); // Prints something like "(7)+3 ? [4+5]+4"
+/// ```
 #[derive(PartialEq, Debug, Clone)]
 pub struct Attack {
     check: Check,

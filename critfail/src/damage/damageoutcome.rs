@@ -2,18 +2,43 @@ use std::fmt;
 
 use crate::{ModifiersOutcome, OutcomePart, Score};
 
-#[derive(Clone)]
+
+/// The outcome of a check roll.
+///
+/// This is normally constructed as the result of calling `roll()` on a
+/// `Damage` roll expression.
+///
+/// ```
+/// use critfail::{RollExpression, Damage, DamageOutcome};
+///
+/// let outcome: DamageOutcome = Damage::new("2d6+6").unwrap().roll();
+/// ```
+#[derive(Clone, PartialEq)]
 pub struct DamageOutcome {
     scores: ModifiersOutcome,
 }
 
 impl DamageOutcome {
+    /// Create a `DamageOutcome` without rolling an expression.
+    ///
+    /// ```
+    /// use critfail::{AdvState, DamageOutcome, OutcomePart};
+    /// use OutcomePart::{Dice, Modifier};
+    ///
+    /// let outcome = DamageOutcome::new(vec![Dice(6, vec![4,6,1]), Modifier(4)]);
+    ///
+    /// assert_eq!(outcome.score(), 15);
+    /// assert_eq!(
+    ///     format!("{:?}", outcome),
+    ///     "[4+6+1]+4"
+    /// );
     pub fn new(scores: Vec<OutcomePart>) -> DamageOutcome {
         DamageOutcome {
             scores: scores.into(),
         }
     }
 
+    /// Get the score of a `DamageOutcome`.
     pub fn score(&self) -> Score {
         self.scores.score()
     }

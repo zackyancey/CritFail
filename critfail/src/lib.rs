@@ -1,7 +1,35 @@
-//! Evaluation and rolling of D&D 5e check and damage rolls.
+//! Evaluation and rolling of D&D 5e die roll expressions.
 //!
-//! This crate provides methods for parsing and rolling dice expressions
-//! and for handling the results.
+//! The `RollExpression` trait provides methods for dealing with the
+//! various kinds of rolls. `Roll` provides the simplest text-in,
+//! text-out interface for rolling expressions an printing the result
+//! regardless of the type of roll.
+//!
+//! ```
+//! use critfail::{RollExpression, Roll};
+//!
+//! let check = Roll::new("r-3").unwrap();
+//! let check_outcome = check.roll();
+//! print!("{}", check_outcome); // eg. "11"
+//! print!("{:?}", check_outcome); // eg. "(14)-3"
+//!
+//! let damage = Roll::new("2d8+6").unwrap();
+//! let damage_outcome = damage.roll();
+//! print!("{}", damage_outcome); // eg. "13"
+//! print!("{:?}", damage_outcome); // eg. "[2+5]+6"
+//!
+//! let attack = Roll::new("r+1?2d6+4").unwrap();
+//! let attack_outcome = attack.roll();
+//! print!("{}", attack_outcome); // eg. "10 ? 16"
+//! print!("{:?}", attack_outcome); // eg. "(9)+1 ? [6+6]+4"
+//! ```
+//!
+//! In order to handle the outcome of a `Roll` programatically, roll
+//! expressions are split into `Check` rolls, `Damage` rolls, and
+//! `Attack` rolls, each with their own outcome type which provides
+//! methods for determining the score and makeup of the results for
+//! each.
+#![warn(missing_docs)]
 #[macro_use]
 extern crate lazy_static;
 
@@ -20,11 +48,14 @@ pub use check::{AdvState, Check, CheckOutcome, CritScore};
 pub use damage::{Damage, DamageOutcome};
 pub use error::ParseError;
 pub(crate) use modifier::ModifiersOutcome;
-use modifier::OutcomePart;
+pub use modifier::OutcomePart;
 
 pub use roll::{Roll, RollOutcome};
 
+/// The number type that is used when reporting the score of a roll
 pub type Score = i32;
+/// The number type that is used for specifying the number of sides on a
+/// die
 pub type Sides = i32;
 
 /// Used for structs defining a set of dice that can be rolled.
@@ -35,7 +66,7 @@ pub trait RollExpression: Sized {
     /// die).
     type Outcome: fmt::Display + fmt::Debug;
 
-    /// Parse a string defining this roll expression.
+    /// Create a new roll expression by parsing the given string.
     fn new(expression: &str) -> Result<Self, ()>;
 
     /// Roll the dice and return an outcome.

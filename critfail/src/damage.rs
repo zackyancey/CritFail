@@ -16,10 +16,36 @@ pub enum DamagePart {
     Modifier(Score),
 }
 
+/// A list of dice to roll and modifiers to add, usually used for
+/// damage.
+///
+/// ```
+/// use critfail::{RollExpression, Damage};
+///
+/// let damage = Damage::new("2d8+1").unwrap();
+///
+/// let outcome = damage.roll();
+///
+/// print!("{}", outcome);   // Prints something like "11"
+/// print!("{:?}", outcome); // Prints something like "[2+5]+4"
+/// ```
 #[derive(Debug, PartialEq, Clone)]
 pub struct Damage(pub Vec<DamagePart>);
 
 impl Damage {
+    /// Roll this `Damage` as though it were a critical hit.
+    ///
+    /// This rolls all the positive dice in the `Damage` twice.
+    /// Modifiers and dice with negative values are only counted once.
+    ///
+    /// ```
+    /// use critfail::{RollExpression, Damage};
+    ///
+    /// let damage = Damage::new("2d8+3-1d4").unwrap();
+    /// let outcome = damage.crit_roll();
+    /// // The d8s are rolled twice, the +3 is counted once, and the d4 is rolled once
+    /// print!("{:?}", damage)  // Prints something like "[5+6+4+7]+3-[2]"
+    /// ```
     pub fn crit_roll(&self) -> DamageOutcome {
         let mut result = Vec::new();
 

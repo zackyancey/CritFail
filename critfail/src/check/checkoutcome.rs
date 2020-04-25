@@ -7,13 +7,28 @@ use crate::Score;
 use std::cmp::{max, min};
 use std::fmt;
 
+/// The score of a roll that could be a critical hit/failure
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum CritScore {
+    /// Critical success (rolled20 without modifiers).
     Critical,
+    /// A normal roll.
     Normal(Score),
+    /// Critical failure (rolled a 1 without modifiers).
     Fail,
 }
 
-#[derive(Clone)]
+/// The outcome of a check roll.
+///
+/// This struct is normally constructed as the result of calling
+/// `roll()` on a `Check` roll expression.
+///
+/// ```
+/// use critfail::{RollExpression, Check, CheckOutcome};
+///
+/// let outcome: CheckOutcome = Check::new("r+1").unwrap().roll();
+/// ```
+#[derive(Clone, PartialEq)]
 pub struct CheckOutcome {
     main: Score,
     other: Option<Score>,
@@ -21,7 +36,29 @@ pub struct CheckOutcome {
 }
 
 impl CheckOutcome {
-    pub fn new(adv: &AdvState, r1: Score, r2: Score, modifiers: Vec<OutcomePart>) -> CheckOutcome {
+    /// Create a `CheckOutcome` without rolling an expression.
+    ///
+    /// r1 and r2 represent the two values used for a check roll with
+    /// advantage or disadvantage. If the roll is made with value of
+    /// `AdvState::Neutral` for `adv`, r1 will be used.
+    ///
+    /// ```
+    /// use critfail::{AdvState, CheckOutcome, OutcomePart};
+    ///
+    /// let outcome = CheckOutcome::new(
+    ///     AdvState::Neutral,
+    ///     10,
+    ///     5,
+    ///     vec![OutcomePart::Modifier(4)]
+    /// );
+    ///
+    /// assert_eq!(outcome.score(), 14);
+    /// assert_eq!(
+    ///     format!("{:?}", outcome),
+    ///     "(10)+4"
+    /// );
+    /// ```
+    pub fn new(adv: AdvState, r1: Score, r2: Score, modifiers: Vec<OutcomePart>) -> CheckOutcome {
         let (main, other) = match adv {
             Advantage => (max(r1, r2), Some(min(r1, r2))),
             Disadvantage => (min(r1, r2), Some(max(r1, r2))),
@@ -36,10 +73,45 @@ impl CheckOutcome {
         }
     }
 
+    /// Get the score of a `CheckOutcome`.
+    ///
+    /// This is the plain numerical score of a roll, without accounting
+    /// for critial success/failure
+    ///
+    /// ```
+    /// use critfail::{AdvState, CheckOutcome, OutcomePart};
+    ///
+    /// // (20)+4
+    /// let critical = CheckOutcome::new(AdvState::Neutral, 20, 1, vec![OutcomePart::Modifier(4)]);
+    /// // (16)+4
+    /// let normal = CheckOutcome::new(AdvState::Neutral, 16, 1, vec![OutcomePart::Modifier(4)]);
+    /// // (1)+4
+    /// let fail = CheckOutcome::new(AdvState::Neutral, 1, 1, vec![OutcomePart::Modifier(4)]);
+    ///
+    /// assert_eq!(critical.score(), 24);
+    /// assert_eq!(normal.score(), 20);
+    /// assert_eq!(fail.score(), 5);
+    /// ```
     pub fn score(&self) -> Score {
         self.main + self.modifiers.score()
     }
 
+    /// Get the score of a `CheckOutcome` that could be a critical success/failure.
+    ///
+    /// ```
+    /// use critfail::{AdvState, CheckOutcome, OutcomePart, CritScore};
+    ///
+    /// // (20)+4
+    /// let critical = CheckOutcome::new(AdvState::Neutral, 20, 1, vec![OutcomePart::Modifier(4)]);
+    /// // (16)+4
+    /// let normal = CheckOutcome::new(AdvState::Neutral, 16, 1, vec![OutcomePart::Modifier(4)]);
+    /// // (1)+4
+    /// let fail = CheckOutcome::new(AdvState::Neutral, 1, 1, vec![OutcomePart::Modifier(4)]);
+    ///
+    /// assert_eq!(critical.crit_score(), CritScore::Critical);
+    /// assert_eq!(normal.crit_score(), CritScore::Normal(20));
+    /// assert_eq!(fail.crit_score(), CritScore::Fail);
+    /// ```
     pub fn crit_score(&self) -> CritScore {
         match self.main {
             1 => CritScore::Fail,
@@ -88,7 +160,7 @@ mod tests {
 
     #[test]
     fn neutral() {
-        let r = CheckOutcome::new(&Neutral, 10, 16, vec![]);
+        let r = CheckOutcome::new(Neutral, 10, 16, vec![]);
         assert_eq!(r.score(), 10);
         assert_eq!(format!("{}", r), "10");
         assert_eq!(format!("{:?}", r), "(10)");
@@ -96,7 +168,7 @@ mod tests {
 
     #[test]
     fn advantage() {
-        let r = CheckOutcome::new(&Advantage, 8, 15, vec![]);
+        let r = CheckOutcome::new(Advantage, 8, 15, vec![]);
         assert_eq!(r.score(), 15);
         assert_eq!(format!("{}", r), "15");
         assert_eq!(format!("{:?}", r), "(15/8)");
@@ -104,7 +176,7 @@ mod tests {
 
     #[test]
     fn disadvantage() {
-        let r = CheckOutcome::new(&Disadvantage, 12, 7, vec![]);
+        let r = CheckOutcome::new(Disadvantage, 12, 7, vec![]);
         assert_eq!(r.score(), 7);
         assert_eq!(format!("{}", r), "7");
         assert_eq!(format!("{:?}", r), "(7/12)");
@@ -112,7 +184,7 @@ mod tests {
 
     #[test]
     fn die_modifier() {
-        let r = CheckOutcome::new(&Neutral, 6, 15, vec![D(4, vec![1])]);
+        let r = CheckOutcome::new(Neutral, 6, 15, vec![D(4, vec![1])]);
         assert_eq!(r.score(), 7);
         assert_eq!(format!("{}", r), "7");
         assert_eq!(format!("{:?}", r), "(6)+[1]");
@@ -120,7 +192,7 @@ mod tests {
 
     #[test]
     fn mixed_modifiers() {
-        let r = CheckOutcome::new(&Advantage, 12, 4, vec![D(-4, vec![2, 3]), M(3)]);
+        let r = CheckOutcome::new(Advantage, 12, 4, vec![D(-4, vec![2, 3]), M(3)]);
         assert_eq!(r.score(), 10);
         assert_eq!(format!("{}", r), "10");
         assert_eq!(format!("{:?}", r), "(12/4)-[2+3]+3");
@@ -128,7 +200,7 @@ mod tests {
 
     #[test]
     fn critical() {
-        let r = CheckOutcome::new(&Advantage, 20, 4, vec![D(-4, vec![2, 3]), M(3)]);
+        let r = CheckOutcome::new(Advantage, 20, 4, vec![D(-4, vec![2, 3]), M(3)]);
         assert_eq!(r.score(), 18);
         assert_eq!(format!("{}", r), "Critical");
         assert_eq!(format!("{:?}", r), "(20/4)-[2+3]+3");
@@ -136,7 +208,7 @@ mod tests {
 
     #[test]
     fn fail() {
-        let r = CheckOutcome::new(&Disadvantage, 1, 4, vec![D(-4, vec![2, 3]), M(3)]);
+        let r = CheckOutcome::new(Disadvantage, 1, 4, vec![D(-4, vec![2, 3]), M(3)]);
         assert_eq!(r.score(), -1);
         assert_eq!(format!("{}", r), "Fail");
         assert_eq!(format!("{:?}", r), "(1/4)-[2+3]+3");

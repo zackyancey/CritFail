@@ -68,7 +68,7 @@ mod tests {
             "d+1d4+3-1?1d4+4d6+2-1d4".parse::<Attack>().unwrap(),
             Attack {
                 check: Check::new("d+1d4+3-1").unwrap(),
-                damage: Damage::new("d+1d4+3-1").unwrap()
+                damage: Damage::new("1d4+4d6+2-1d4").unwrap()
             }
         )
     }

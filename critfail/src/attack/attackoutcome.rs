@@ -2,21 +2,44 @@ use std::fmt;
 
 use crate::{CheckOutcome, DamageOutcome};
 
-#[derive(Clone)]
+/// The outcome of an attack roll.
+///
+/// This struct is normally constructed as the result of calling
+/// `roll()` on an `Attack` roll expression.
+///
+/// ```
+/// use critfail::{RollExpression, Attack, AttackOutcome};
+///
+/// let outcome: AttackOutcome = Attack::new("r+1?1d12+1").unwrap().roll();
+/// ```
+#[derive(Clone, PartialEq)]
 pub struct AttackOutcome {
     check: CheckOutcome,
     damage: DamageOutcome,
 }
 
 impl AttackOutcome {
+    /// Create an attack outcome without rolling a check.
+    ///
+    /// ```
+    /// use critfail::{DamageOutcome, CheckOutcome, AttackOutcome, AdvState};
+    /// use critfail::OutcomePart::{Dice, Modifier};
+    ///
+    /// let damage = DamageOutcome::new(vec![Dice(6, vec![4,6,1]), Modifier(4)]);
+    /// let check = CheckOutcome::new(AdvState::Neutral, 10, 5, vec![Modifier(4)]);
+    ///
+    /// let outcome = AttackOutcome::new(check, damage);
+    /// ```
     pub fn new(check: CheckOutcome, damage: DamageOutcome) -> AttackOutcome {
         AttackOutcome { check, damage }
     }
 
+    /// Get the check portion of this `AttackOutcome`.
     pub fn check(&self) -> &CheckOutcome {
         &self.check
     }
 
+    /// Get the damage portion of this `AttackOutcome`.
     pub fn damage(&self) -> &DamageOutcome {
         &self.damage
     }
@@ -44,7 +67,7 @@ mod tests {
     #[test]
     fn no_modifier() {
         let r = AttackOutcome::new(
-            CheckOutcome::new(&Neutral, 10, 16, vec![]),
+            CheckOutcome::new(Neutral, 10, 16, vec![]),
             DamageOutcome::new(vec![D(6, vec![5, 4]), M(4)]),
         );
 
@@ -55,7 +78,7 @@ mod tests {
     #[test]
     fn with_modifier() {
         let r = AttackOutcome::new(
-            CheckOutcome::new(&Disadvantage, 5, 12, vec![M(3)]),
+            CheckOutcome::new(Disadvantage, 5, 12, vec![M(3)]),
             DamageOutcome::new(vec![D(8, vec![2, 6, 8]), M(-2)]),
         );
 
@@ -66,7 +89,7 @@ mod tests {
     #[test]
     fn critical() {
         let r = AttackOutcome::new(
-            CheckOutcome::new(&Advantage, 20, 4, vec![M(3)]),
+            CheckOutcome::new(Advantage, 20, 4, vec![M(3)]),
             DamageOutcome::new(vec![D(8, vec![2, 6, 8]), D(8, vec![1, 5, 2]), M(-2)]),
         );
 
@@ -77,7 +100,7 @@ mod tests {
     #[test]
     fn critfail() {
         let r = AttackOutcome::new(
-            CheckOutcome::new(&Disadvantage, 15, 1, vec![M(3)]),
+            CheckOutcome::new(Disadvantage, 15, 1, vec![M(3)]),
             DamageOutcome::new(vec![D(8, vec![3, 1]), M(-2)]),
         );
 
