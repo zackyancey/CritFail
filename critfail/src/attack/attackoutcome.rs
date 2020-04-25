@@ -38,14 +38,14 @@ impl fmt::Debug for AttackOutcome {
 mod tests {
     use super::*;
     use crate::AdvState::*;
-    use crate::DamageOutcomePart::Dice as Dr;
-    use crate::DamageOutcomePart::Modifier as Mr;
+    use crate::OutcomePart::Dice as D;
+    use crate::OutcomePart::Modifier as M;
 
     #[test]
     fn no_modifier() {
         let r = AttackOutcome::new(
-            CheckOutcome::new(&Neutral, 10, 16, DamageOutcome::new(vec![])),
-            DamageOutcome::new(vec![Dr(6, vec![5, 4]), Mr(4)]),
+            CheckOutcome::new(&Neutral, 10, 16, vec![]),
+            DamageOutcome::new(vec![D(6, vec![5, 4]), M(4)]),
         );
 
         assert_eq!(format!("{}", r), "10 ? 13");
@@ -55,8 +55,8 @@ mod tests {
     #[test]
     fn with_modifier() {
         let r = AttackOutcome::new(
-            CheckOutcome::new(&Disadvantage, 5, 12, DamageOutcome::new(vec![Mr(3)])),
-            DamageOutcome::new(vec![Dr(8, vec![2, 6, 8]), Mr(-2)]),
+            CheckOutcome::new(&Disadvantage, 5, 12, vec![M(3)]),
+            DamageOutcome::new(vec![D(8, vec![2, 6, 8]), M(-2)]),
         );
 
         assert_eq!(format!("{}", r), "8 ? 14");
@@ -66,8 +66,8 @@ mod tests {
     #[test]
     fn critical() {
         let r = AttackOutcome::new(
-            CheckOutcome::new(&Advantage, 20, 4, DamageOutcome::new(vec![Mr(3)])),
-            DamageOutcome::new(vec![Dr(8, vec![2, 6, 8]), Dr(8, vec![1, 5, 2]), Mr(-2)]),
+            CheckOutcome::new(&Advantage, 20, 4, vec![M(3)]),
+            DamageOutcome::new(vec![D(8, vec![2, 6, 8]), D(8, vec![1, 5, 2]), M(-2)]),
         );
 
         assert_eq!(format!("{}", r), "Critical ? 22");
@@ -77,8 +77,8 @@ mod tests {
     #[test]
     fn critfail() {
         let r = AttackOutcome::new(
-            CheckOutcome::new(&Disadvantage, 15, 1, DamageOutcome::new(vec![Mr(3)])),
-            DamageOutcome::new(vec![Dr(8, vec![3, 1]), Mr(-2)]),
+            CheckOutcome::new(&Disadvantage, 15, 1, vec![M(3)]),
+            DamageOutcome::new(vec![D(8, vec![3, 1]), M(-2)]),
         );
 
         assert_eq!(format!("{}", r), "Fail ? 2");

@@ -27,8 +27,6 @@ impl FromStr for Attack {
 mod tests {
     use super::*;
 
-    use crate::damage::DamagePart::Dice as D;
-    use crate::damage::DamagePart::Modifier as M;
     use crate::{Check, Damage, RollExpression};
 
     #[test]
@@ -37,7 +35,7 @@ mod tests {
             "+3?2d8-1".parse::<Attack>().unwrap(),
             Attack {
                 check: Check::new("r+3").unwrap(),
-                damage: Damage(vec![D(2, 8), M(-1)])
+                damage: Damage::new("2d8-1").unwrap()
             }
         )
     }
@@ -48,7 +46,7 @@ mod tests {
             "a-1?2d8+1".parse::<Attack>().unwrap(),
             Attack {
                 check: Check::new("a-1").unwrap(),
-                damage: Damage(vec![D(2, 8), M(1)])
+                damage: Damage::new("2d8+1").unwrap()
             }
         )
     }
@@ -59,7 +57,7 @@ mod tests {
             "r+8?3d10+2".parse::<Attack>().unwrap(),
             Attack {
                 check: Check::new("r+8").unwrap(),
-                damage: Damage(vec![D(3, 10), M(2)])
+                damage: Damage::new("3d10+2").unwrap()
             }
         )
     }
@@ -70,7 +68,7 @@ mod tests {
             "d+1d4+3-1?1d4+4d6+2-1d4".parse::<Attack>().unwrap(),
             Attack {
                 check: Check::new("d+1d4+3-1").unwrap(),
-                damage: Damage(vec![D(1, 4), D(4, 6), M(2), D(1, -4)])
+                damage: Damage::new("d+1d4+3-1").unwrap()
             }
         )
     }

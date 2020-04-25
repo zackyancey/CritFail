@@ -1,7 +1,9 @@
 use crate::AdvState;
 use crate::AdvState::*;
-use crate::DamageOutcome;
+use crate::ModifiersOutcome;
+use crate::OutcomePart;
 use crate::Score;
+
 use std::cmp::{max, min};
 use std::fmt;
 
@@ -15,16 +17,17 @@ pub enum CritScore {
 pub struct CheckOutcome {
     main: Score,
     other: Option<Score>,
-    modifiers: DamageOutcome,
+    modifiers: ModifiersOutcome,
 }
 
 impl CheckOutcome {
-    pub fn new(adv: &AdvState, r1: Score, r2: Score, modifiers: DamageOutcome) -> CheckOutcome {
+    pub fn new(adv: &AdvState, r1: Score, r2: Score, modifiers: Vec<OutcomePart>) -> CheckOutcome {
         let (main, other) = match adv {
             Advantage => (max(r1, r2), Some(min(r1, r2))),
             Disadvantage => (min(r1, r2), Some(max(r1, r2))),
             Neutral => (r1, None),
         };
+        let modifiers = modifiers.into();
 
         CheckOutcome {
             main,
@@ -80,12 +83,12 @@ impl fmt::Debug for CheckOutcome {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::DamageOutcomePart::Dice as Dr;
-    use crate::DamageOutcomePart::Modifier as Mr;
+    use crate::OutcomePart::Dice as D;
+    use crate::OutcomePart::Modifier as M;
 
     #[test]
     fn neutral() {
-        let r = CheckOutcome::new(&Neutral, 10, 16, DamageOutcome::new(vec![]));
+        let r = CheckOutcome::new(&Neutral, 10, 16, vec![]);
         assert_eq!(r.score(), 10);
         assert_eq!(format!("{}", r), "10");
         assert_eq!(format!("{:?}", r), "(10)");
@@ -93,7 +96,7 @@ mod tests {
 
     #[test]
     fn advantage() {
-        let r = CheckOutcome::new(&Advantage, 8, 15, DamageOutcome::new(vec![]));
+        let r = CheckOutcome::new(&Advantage, 8, 15, vec![]);
         assert_eq!(r.score(), 15);
         assert_eq!(format!("{}", r), "15");
         assert_eq!(format!("{:?}", r), "(15/8)");
@@ -101,7 +104,7 @@ mod tests {
 
     #[test]
     fn disadvantage() {
-        let r = CheckOutcome::new(&Disadvantage, 12, 7, DamageOutcome::new(vec![]));
+        let r = CheckOutcome::new(&Disadvantage, 12, 7, vec![]);
         assert_eq!(r.score(), 7);
         assert_eq!(format!("{}", r), "7");
         assert_eq!(format!("{:?}", r), "(7/12)");
@@ -109,7 +112,7 @@ mod tests {
 
     #[test]
     fn die_modifier() {
-        let r = CheckOutcome::new(&Neutral, 6, 15, DamageOutcome::new(vec![Dr(4, vec![1])]));
+        let r = CheckOutcome::new(&Neutral, 6, 15, vec![D(4, vec![1])]);
         assert_eq!(r.score(), 7);
         assert_eq!(format!("{}", r), "7");
         assert_eq!(format!("{:?}", r), "(6)+[1]");
@@ -117,12 +120,7 @@ mod tests {
 
     #[test]
     fn mixed_modifiers() {
-        let r = CheckOutcome::new(
-            &Advantage,
-            12,
-            4,
-            DamageOutcome::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
-        );
+        let r = CheckOutcome::new(&Advantage, 12, 4, vec![D(-4, vec![2, 3]), M(3)]);
         assert_eq!(r.score(), 10);
         assert_eq!(format!("{}", r), "10");
         assert_eq!(format!("{:?}", r), "(12/4)-[2+3]+3");
@@ -130,12 +128,7 @@ mod tests {
 
     #[test]
     fn critical() {
-        let r = CheckOutcome::new(
-            &Advantage,
-            20,
-            4,
-            DamageOutcome::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
-        );
+        let r = CheckOutcome::new(&Advantage, 20, 4, vec![D(-4, vec![2, 3]), M(3)]);
         assert_eq!(r.score(), 18);
         assert_eq!(format!("{}", r), "Critical");
         assert_eq!(format!("{:?}", r), "(20/4)-[2+3]+3");
@@ -143,12 +136,7 @@ mod tests {
 
     #[test]
     fn fail() {
-        let r = CheckOutcome::new(
-            &Disadvantage,
-            1,
-            4,
-            DamageOutcome::new(vec![Dr(-4, vec![2, 3]), Mr(3)]),
-        );
+        let r = CheckOutcome::new(&Disadvantage, 1, 4, vec![D(-4, vec![2, 3]), M(3)]);
         assert_eq!(r.score(), -1);
         assert_eq!(format!("{}", r), "Fail");
         assert_eq!(format!("{:?}", r), "(1/4)-[2+3]+3");

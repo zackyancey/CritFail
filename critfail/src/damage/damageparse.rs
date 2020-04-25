@@ -4,7 +4,7 @@ use std::str::FromStr;
 use regex::Regex;
 
 use crate::ParseError;
-use crate::{Damage, damage::DamagePart};
+use crate::{damage::DamagePart, Damage};
 use crate::{Score, Sides};
 
 lazy_static! {

@@ -11,18 +11,18 @@ mod attack;
 mod check;
 mod damage;
 mod error;
+mod modifier;
 mod roll;
 mod util;
 
-pub use roll::{Roll, RollOutcome};
-pub use check::{Check, CheckOutcome, AdvState, CritScore};
-pub use damage::{Damage, DamageOutcome};
 pub use attack::{Attack, AttackOutcome};
+pub use check::{AdvState, Check, CheckOutcome, CritScore};
+pub use damage::{Damage, DamageOutcome};
 pub use error::ParseError;
+pub(crate) use modifier::ModifiersOutcome;
+use modifier::OutcomePart;
 
-// TODO: Replace DamageOutcomePart with a publically-exposable ModifierPart type
-use damage::DamageOutcomePart;
-pub type OutcomePart = DamageOutcomePart;
+pub use roll::{Roll, RollOutcome};
 
 pub type Score = i32;
 pub type Sides = i32;

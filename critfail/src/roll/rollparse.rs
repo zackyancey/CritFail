@@ -19,7 +19,6 @@ impl FromStr for Roll {
     }
 }
 
-// TODO: Fix these tests for new format
 #[cfg(test)]
 mod tests {
     use crate::damage::DamagePart::Dice as D;
@@ -143,13 +142,4 @@ mod tests {
             Roll::Attack(Attack::new("a+1d4+3-1?1d4+4d6+2-1d4").unwrap())
         );
     }
-
-    // TODO: Finish tests
-    /*
-        // Multi roll statements
-        "2d8;3d6;4d10"
-        "r;+3;+2"
-        "+2?2d6;+2?2d6;+5,1d8"
-        "3d4;+3;-1?4d6"
-    */
 }

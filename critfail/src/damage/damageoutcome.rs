@@ -1,71 +1,26 @@
 use std::fmt;
 
-use crate::{Score, Sides};
-
-use crate::util;
-use DamageOutcomePart::*;
+use crate::{ModifiersOutcome, OutcomePart, Score};
 
 #[derive(Clone)]
 pub struct DamageOutcome {
-    sum: Option<Score>,
-    scores: Vec<DamageOutcomePart>,
-}
-
-#[derive(Clone)]
-pub enum DamageOutcomePart {
-    Dice(Sides, Vec<Score>),
-    Modifier(Score),
+    scores: ModifiersOutcome,
 }
 
 impl DamageOutcome {
-    pub fn new(scores: Vec<DamageOutcomePart>) -> DamageOutcome {
-        DamageOutcome { sum: None, scores }
+    pub fn new(scores: Vec<OutcomePart>) -> DamageOutcome {
+        DamageOutcome {
+            scores: scores.into(),
+        }
     }
 
     pub fn score(&self) -> Score {
-        self.sum
-            .unwrap_or_else(|| self.scores.iter().map(|s| s.score()).sum())
+        self.scores.score()
     }
-}
 
-impl DamageOutcomePart {
-    pub fn score(&self) -> Score {
-        match self {
-            Dice(sides, d) => {
-                let sum: Score = d.iter().sum();
-                if *sides < 0 {
-                    -sum
-                } else {
-                    sum
-                }
-            }
-            Modifier(m) => *m,
-        }
-    }
-}
-
-impl fmt::Display for DamageOutcomePart {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.score())
-    }
-}
-
-impl fmt::Debug for DamageOutcomePart {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            DamageOutcomePart::Dice(sides, scores) => {
-                if *sides < 0 {
-                    write!(f, "-")?;
-                }
-                let scores = scores.iter().map(|i| format!("{}", i));
-
-                write!(f, "[")?;
-                util::write_string_sum(f, scores)?;
-                write!(f, "]")
-            }
-
-            DamageOutcomePart::Modifier(m) => write!(f, "{}", m),
-        }
+    // TODO: Get rid of this function once Check isn't using Damage for its rolls anymore.
+    pub(crate) fn into_modifiers(self) -> ModifiersOutcome {
+        self.scores
     }
 }
 
@@ -77,23 +32,19 @@ impl fmt::Display for DamageOutcome {
 
 impl fmt::Debug for DamageOutcome {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let scores = self.scores.iter().map(|s| format!("{:?}", s));
-        util::write_string_sum(f, scores)
+        write!(f, "{:?}", self.scores)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use DamageOutcomePart::Dice as Dr;
-    use DamageOutcomePart::Modifier as Mr;
+    use OutcomePart::Dice as D;
+    use OutcomePart::Modifier as M;
 
     #[test]
     fn empty() {
-        let r = DamageOutcome {
-            sum: None,
-            scores: vec![],
-        };
+        let r = DamageOutcome::new(vec![]);
         assert_eq!(r.score(), 0);
         assert_eq!(r.score(), 0); // Check twice to make sure nothing is weird with lazy evaluation
         assert_eq!(format!("{}", r), "0");
@@ -102,10 +53,7 @@ mod tests {
 
     #[test]
     fn just_modifier() {
-        let r = DamageOutcome {
-            sum: None,
-            scores: vec![Mr(2)],
-        };
+        let r = DamageOutcome::new(vec![M(2)]);
         assert_eq!(r.score(), 2);
         assert_eq!(r.score(), 2); // Check twice to make sure nothing is weird with lazy evaluation
         assert_eq!(format!("{}", r), "2");
@@ -114,10 +62,7 @@ mod tests {
 
     #[test]
     fn dice_modifier() {
-        let r = DamageOutcome {
-            sum: None,
-            scores: vec![Dr(4, vec![1, 2, 3]), Mr(-2)],
-        };
+        let r = DamageOutcome::new(vec![D(4, vec![1, 2, 3]), M(-2)]);
 
         assert_eq!(r.score(), 4);
         assert_eq!(format!("{}", r), "4");
@@ -126,10 +71,7 @@ mod tests {
 
     #[test]
     fn negative_dice() {
-        let r = DamageOutcome {
-            sum: None,
-            scores: vec![Dr(6, vec![4, 1, 6]), Mr(4), Dr(-4, vec![3, 1])],
-        };
+        let r = DamageOutcome::new(vec![D(6, vec![4, 1, 6]), M(4), D(-4, vec![3, 1])]);
         assert_eq!(r.score(), 11);
         assert_eq!(format!("{}", r), "11");
         assert_eq!(format!("{:?}", r), "[4+1+6]+4-[3+1]");

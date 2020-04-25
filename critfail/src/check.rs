@@ -34,6 +34,6 @@ impl RollExpression for Check {
         let r1 = rand::thread_rng().gen_range(1, 21);
         let r2 = rand::thread_rng().gen_range(1, 21);
         let mods = self.modifier.roll();
-        CheckOutcome::new(&self.adv, r1, r2, mods)
+        CheckOutcome::new(&self.adv, r1, r2, mods.into_modifiers().into_inner())
     }
 }

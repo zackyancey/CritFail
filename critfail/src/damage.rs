@@ -1,14 +1,15 @@
 use rand::Rng;
 
+use crate::OutcomePart;
 use crate::RollExpression;
 use crate::{Score, Sides};
 
-mod damageparse;
 mod damageoutcome;
+mod damageparse;
 
-pub use damageoutcome::{DamageOutcome, DamageOutcomePart};
+pub use damageoutcome::DamageOutcome;
 
-// TODO: DamagePart should not be `pub`
+// TODO: DamagePart should not be `pub` (once Check stops using Damage)
 #[derive(PartialEq, Debug, Clone)]
 pub enum DamagePart {
     Dice(u32, Sides),
@@ -51,7 +52,7 @@ impl RollExpression for Damage {
 }
 
 impl RollExpression for DamagePart {
-    type Outcome = damageoutcome::DamageOutcomePart;
+    type Outcome = OutcomePart;
 
     fn new(expression: &str) -> Result<Self, ()> {
         expression.parse().map_err(|_| ())
@@ -64,10 +65,10 @@ impl RollExpression for DamagePart {
                     .map(|_| rand::thread_rng().gen_range(1, sides.abs() + 1))
                     .collect();
 
-                DamageOutcomePart::Dice(*sides, rolls)
+                OutcomePart::Dice(*sides, rolls)
             }
 
-            DamagePart::Modifier(value) => DamageOutcomePart::Modifier(*value),
+            DamagePart::Modifier(value) => OutcomePart::Modifier(*value),
         }
     }
 }

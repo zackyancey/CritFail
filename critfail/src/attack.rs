@@ -9,8 +9,8 @@ mod attackparse;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Attack {
-    pub check: Check,
-    pub damage: Damage,
+    check: Check,
+    damage: Damage,
 }
 
 impl RollExpression for Attack {
