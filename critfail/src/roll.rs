@@ -53,4 +53,55 @@ impl RollExpression for Roll {
             Roll::Attack(a) => RollOutcome::AttackOutcome(a.roll()),
         }
     }
+
+}
+
+impl Roll {
+    /// Return true if this `Roll` is a check roll.
+    ///
+    /// ```
+    /// use critfail::{RollExpression, Roll};
+    ///
+    /// assert_eq!(Roll::new("r+3").unwrap().is_check(), true);
+    /// assert_eq!(Roll::new("2d8+5").unwrap().is_check(), false);
+    /// assert_eq!(Roll::new("r+3?2d8+5").unwrap().is_check(), false);
+    /// ```
+    pub fn is_check(&self) -> bool {
+        match self {
+            Self::Check(_) => true,
+            _ => false,
+        }
+    }
+
+    /// Return true if this `Roll` is a damage roll.
+    ///
+    /// ```
+    /// use critfail::{RollExpression, Roll};
+    ///
+    /// assert_eq!(Roll::new("r+3").unwrap().is_damage(), false);
+    /// assert_eq!(Roll::new("2d8+5").unwrap().is_damage(), true);
+    /// assert_eq!(Roll::new("r+3?2d8+5").unwrap().is_damage(), false);
+    /// ```
+    pub fn is_damage(&self) -> bool {
+        match self {
+            Self::Damage(_) => true,
+            _ => false,
+        }
+    }
+
+    /// Return true if this `Roll` is an attack roll.
+    ///
+    /// ```
+    /// use critfail::{RollExpression, Roll};
+    ///
+    /// assert_eq!(Roll::new("r+3").unwrap().is_attack(), false);
+    /// assert_eq!(Roll::new("2d8+5").unwrap().is_attack(), false);
+    /// assert_eq!(Roll::new("r+3?2d8+5").unwrap().is_attack(), true);
+    /// ```
+    pub fn is_attack(&self) -> bool {
+        match self {
+            Self::Attack(_) => true,
+            _ => false,
+        }
+    }
 }

@@ -28,6 +28,56 @@ pub enum RollOutcome {
     AttackOutcome(AttackOutcome),
 }
 
+impl RollOutcome {
+    /// Return true if this `RollOutcome` is the outcome of a check roll.
+    ///
+    /// ```
+    /// use critfail::{RollExpression, Roll};
+    ///
+    /// assert_eq!(Roll::new("r+3").unwrap().roll().is_check(), true);
+    /// assert_eq!(Roll::new("2d8+5").unwrap().roll().is_check(), false);
+    /// assert_eq!(Roll::new("r+3?2d8+5").unwrap().roll().is_check(), false);
+    /// ```
+    pub fn is_check(&self) -> bool {
+        match self {
+            Self::CheckOutcome(_) => true,
+            _ => false,
+        }
+    }
+
+    /// Return true if this `RollOutcome` is the outcome of a damage roll.
+    ///
+    /// ```
+    /// use critfail::{RollExpression, Roll};
+    ///
+    /// assert_eq!(Roll::new("r+3").unwrap().roll().is_damage(), false);
+    /// assert_eq!(Roll::new("2d8+5").unwrap().roll().is_damage(), true);
+    /// assert_eq!(Roll::new("r+3?2d8+5").unwrap().roll().is_damage(), false);
+    /// ```
+    pub fn is_damage(&self) -> bool {
+        match self {
+            Self::DamageOutcome(_) => true,
+            _ => false,
+        }
+    }
+
+    /// Return true if this `RollOutcome` is the outcome of an attack roll.
+    ///
+    /// ```
+    /// use critfail::{RollExpression, Roll};
+    ///
+    /// assert_eq!(Roll::new("r+3").unwrap().roll().is_attack(), false);
+    /// assert_eq!(Roll::new("2d8+5").unwrap().roll().is_attack(), false);
+    /// assert_eq!(Roll::new("r+3?2d8+5").unwrap().roll().is_attack(), true);
+    /// ```
+    pub fn is_attack(&self) -> bool {
+        match self {
+            Self::AttackOutcome(_) => true,
+            _ => false,
+        }
+    }
+}
+
 impl fmt::Display for RollOutcome {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {

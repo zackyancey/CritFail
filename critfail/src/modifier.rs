@@ -13,11 +13,7 @@ impl ModifiersOutcome {
         self.scores.iter().map(|s| s.score()).sum()
     }
 
-    pub fn iter(&self) -> std::slice::Iter<OutcomePart> {
-        self.scores.iter()
-    }
-
-    pub fn into_inner(self) -> Vec<OutcomePart> {
+    pub(crate) fn into_inner(self) -> Vec<OutcomePart> {
         self.scores
     }
 }
