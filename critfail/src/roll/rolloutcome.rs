@@ -21,11 +21,11 @@ use crate::{AttackOutcome, CheckOutcome, DamageOutcome};
 #[derive(Clone)]
 pub enum RollOutcome {
     /// The outcome of a `Roll` that contained a `Check`.
-    CheckOutcome(CheckOutcome),
+    Check(CheckOutcome),
     /// The outcome of a `Roll` that contained a `Damage`.
-    DamageOutcome(DamageOutcome),
+    Damage(DamageOutcome),
     /// The outcome of a `Roll` that contained an `Attack`.
-    AttackOutcome(AttackOutcome),
+    Attack(AttackOutcome),
 }
 
 impl RollOutcome {
@@ -40,7 +40,7 @@ impl RollOutcome {
     /// ```
     pub fn is_check(&self) -> bool {
         match self {
-            Self::CheckOutcome(_) => true,
+            Self::Check(_) => true,
             _ => false,
         }
     }
@@ -56,7 +56,7 @@ impl RollOutcome {
     /// ```
     pub fn is_damage(&self) -> bool {
         match self {
-            Self::DamageOutcome(_) => true,
+            Self::Damage(_) => true,
             _ => false,
         }
     }
@@ -72,7 +72,7 @@ impl RollOutcome {
     /// ```
     pub fn is_attack(&self) -> bool {
         match self {
-            Self::AttackOutcome(_) => true,
+            Self::Attack(_) => true,
             _ => false,
         }
     }
@@ -81,9 +81,9 @@ impl RollOutcome {
 impl fmt::Display for RollOutcome {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            RollOutcome::CheckOutcome(c) => write!(f, "{}", c),
-            RollOutcome::DamageOutcome(d) => write!(f, "{}", d),
-            RollOutcome::AttackOutcome(a) => write!(f, "{}", a),
+            RollOutcome::Check(c) => write!(f, "{}", c),
+            RollOutcome::Damage(d) => write!(f, "{}", d),
+            RollOutcome::Attack(a) => write!(f, "{}", a),
         }
     }
 }
@@ -91,9 +91,9 @@ impl fmt::Display for RollOutcome {
 impl fmt::Debug for RollOutcome {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            RollOutcome::CheckOutcome(c) => write!(f, "{:?}", c),
-            RollOutcome::DamageOutcome(d) => write!(f, "{:?}", d),
-            RollOutcome::AttackOutcome(a) => write!(f, "{:?}", a),
+            RollOutcome::Check(c) => write!(f, "{:?}", c),
+            RollOutcome::Damage(d) => write!(f, "{:?}", d),
+            RollOutcome::Attack(a) => write!(f, "{:?}", a),
         }
     }
 }

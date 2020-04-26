@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 /// Represents an error parsing a roll expression.
 pub struct ParseError {
     details: String,
@@ -12,6 +12,12 @@ impl ParseError {
         ParseError {
             details: msg.to_string(),
         }
+    }
+}
+
+impl Default for ParseError {
+    fn default() -> Self {
+        ParseError { details: "".into() }
     }
 }
 

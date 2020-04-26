@@ -48,9 +48,9 @@ impl RollExpression for Roll {
 
     fn roll(&self) -> Self::Outcome {
         match self {
-            Roll::Check(c) => RollOutcome::CheckOutcome(c.roll()),
-            Roll::Damage(d) => RollOutcome::DamageOutcome(d.roll()),
-            Roll::Attack(a) => RollOutcome::AttackOutcome(a.roll()),
+            Roll::Check(c) => RollOutcome::Check(c.roll()),
+            Roll::Damage(d) => RollOutcome::Damage(d.roll()),
+            Roll::Attack(a) => RollOutcome::Attack(a.roll()),
         }
     }
 }
