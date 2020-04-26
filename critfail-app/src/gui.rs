@@ -71,19 +71,17 @@ impl Sandbox for Window {
             ),
 
             examples_main: ExampleGroup::new(SectionId::Main)
-                .push(Example::new("Check: Roll a d20, add 6", "r+6"))
-                .push(Example::new("Damage: Roll 2d8 and adds 4", "2d8+4"))
+                .push(Example::new("Check: Roll a d20, add 6.", "+6"))
+                .push(Example::new("Damage: Roll 2 d8s and add 4", "2d8+4"))
                 .push(Example::new(
                     "Attack: d20+3 to hit, 1d12+3 damage",
-                    "r+3?1d12+3",
+                    "+3?1d12+3",
                 )),
             examples_check: ExampleGroup::new(SectionId::Check)
-                .push(Example::new("Roll a d20", "r"))
-                .push(Example::new("Roll a d20 with advantage then add 5", "a+5"))
-                .push(Example::new(
-                    "Roll a d20 with disadvantage then add 4 and 1d4",
-                    "d+4+1d4",
-                )),
+                .push(Example::new("Just roll a d20", "r"))
+                .push(Example::new("Roll a d20, then add 5", "r+5"))
+                .push(Example::new("Roll a d20, then add 5", "+5"))
+                .push(Example::new("Roll d20 and 1d4, and add 4", "+4+1d4")),
             examples_damage: ExampleGroup::new(SectionId::Damage)
                 .push(Example::new("A simple damage roll", "2d8+5"))
                 .push(Example::new(
@@ -91,10 +89,10 @@ impl Sandbox for Window {
                     "3d12-1d4+6-2",
                 )),
             examples_attack: ExampleGroup::new(SectionId::Attack)
-                .push(Example::new("+3 to hit, 1d8 of damage", "r+3?1d8"))
+                .push(Example::new("+3 to hit, 1d8 of damage", "+3?1d8"))
                 .push(Example::new(
-                    "attack with advantage and +5 to hit, 1d4+4+5d6 of damage",
-                    "a+5?1d4+4+5d6",
+                    "+5 to hit, 1d4+4+5d6 of damage",
+                    "+5?1d4+4+5d6",
                 )),
 
             view: Default::default(),
@@ -219,11 +217,11 @@ impl Sandbox for Window {
             View::Help => Scrollable::new(&mut self.help_scroll)
                 .padding(20)
                 .spacing(20)
-                .push(style::text::paragraph("Critfail is a dice simulator, designed in particular for D&D 5e. There are 3 kinds of rolls that can be made: Checks, damage, and attacks."))
+                .push(style::text::paragraph("Critfail is a dice simulator, designed in particular for D&D 5e. There are 3 kinds of rolls that can be made: Checks, damage, and attacks. Checks and attacks can be rolled with advantage or disadvantage, and extra damage is automatically rolled for attacks that are critical hists."))
                 .push(self.examples_main.view())
 
                 .push(style::text::header("Checks"))
-                .push(style::text::paragraph("Checks are used for anything where you roll a d20, optionally with modifiers or disadvantage."))
+                .push(style::text::paragraph("Checks are used for anything where you roll a d20, optionally with modifiers or disadvantage. A check can start with an `r` to indicate the d20, but it doesn't have to. Replace the `r` with an `a` or a `d` to roll with advantage/disadvantage, or just use the buttons."))
                 .push(self.examples_check.view())
 
                 .push(style::text::header("Damage"))
