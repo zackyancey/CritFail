@@ -44,6 +44,7 @@
 extern crate lazy_static;
 
 use std::fmt;
+use std::str::FromStr;
 
 mod attack;
 mod check;
@@ -68,7 +69,7 @@ pub type Score = i32;
 pub type Sides = i32;
 
 /// Used for structs defining a set of dice that can be rolled.
-pub trait RollExpression: Sized {
+pub trait RollExpression: Sized + FromStr<Err=ParseError>{
     /// The roll result type should implement both Display and Debug.
     /// Display should print out a consise result for the roll, and
     /// Debug should print out the details (eg the value for each rolled
@@ -76,7 +77,9 @@ pub trait RollExpression: Sized {
     type Outcome: fmt::Display + fmt::Debug;
 
     /// Create a new roll expression by parsing the given string.
-    fn new(expression: &str) -> Result<Self, ParseError>;
+    fn new(expression: &str) -> Result<Self, ParseError> {
+        expression.parse()
+    }
 
     /// Roll the dice and return an outcome.
     fn roll(&self) -> Self::Outcome;

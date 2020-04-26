@@ -1,4 +1,3 @@
-use crate::ParseError;
 use crate::RollExpression;
 use crate::{AdvState, Check, Damage};
 
@@ -47,10 +46,6 @@ impl Attack {
 
 impl RollExpression for Attack {
     type Outcome = AttackOutcome;
-
-    fn new(expression: &str) -> Result<Self, ParseError> {
-        expression.parse()
-    }
 
     fn roll(&self) -> Self::Outcome {
         let check = self.check.roll();
