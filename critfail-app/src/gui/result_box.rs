@@ -1,5 +1,5 @@
 use super::ExpressionBox;
-use critfail::{Roll, RollExpression, RollOutcome};
+use critfail::RollOutcome;
 use iced::{Align, Color, Column, Element, HorizontalAlignment, Length, Row, Space, Text};
 
 #[derive(Clone)]
@@ -117,16 +117,6 @@ impl ResultMessage {
                 roll,
             },
             Err(error) => ResultMessage::RollError { name, error },
-        }
-    }
-
-    pub(super) fn from_example(expression: String) -> Self {
-        let rollexp = Roll::new(&expression).unwrap();
-
-        ResultMessage::RollSucceeded {
-            name: expression,
-            expression: "".into(),
-            roll: rollexp.roll(),
         }
     }
 }
