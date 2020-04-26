@@ -98,9 +98,9 @@ impl Sandbox for Window {
 
     fn update(&mut self, message: Message) {
         match message {
-            Message::ExpressionMsg(i, ExpressionMsg::RollPressed) => {
+            Message::ExpressionMsg(i, ExpressionMsg::RollPressed(adv)) => {
                 let expression = &self.expressions[i];
-                let result = expression.roll();
+                let result = expression.roll(adv);
 
                 self.result_box
                     .update(ResultMessage::from_roll(&expression, result))
@@ -237,7 +237,7 @@ impl Sandbox for Window {
 
         Container::new(
             Column::new()
-                .max_width(1000)
+                .max_width(800)
                 .align_items(Align::Center)
                 .push(title_bar)
                 .push(view),
