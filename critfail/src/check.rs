@@ -1,7 +1,7 @@
 use rand::Rng;
 
 use crate::Damage;
-use crate::RollExpression;
+use crate::{ParseError, RollExpression};
 
 pub use checkoutcome::{CheckOutcome, CritScore};
 
@@ -62,8 +62,8 @@ impl Check {
 impl RollExpression for Check {
     type Outcome = CheckOutcome;
 
-    fn new(expression: &str) -> Result<Self, ()> {
-        expression.parse().map_err(|_| ())
+    fn new(expression: &str) -> Result<Self, ParseError> {
+        expression.parse()
     }
 
     fn roll(&self) -> Self::Outcome {

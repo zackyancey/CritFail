@@ -1,7 +1,7 @@
 use crate::Attack;
 use crate::ParseError;
 use regex::Regex;
-use std::error::Error;
+
 use std::str::FromStr;
 
 lazy_static! {
@@ -9,7 +9,7 @@ lazy_static! {
 }
 
 impl FromStr for Attack {
-    type Err = Box<dyn Error>;
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if let Some(cap) = ATTACK_RE.captures(s) {
@@ -18,7 +18,7 @@ impl FromStr for Attack {
 
             Ok(Attack { check, damage })
         } else {
-            Err(Box::new(ParseError::new(s)))
+            Err(ParseError::new(s))
         }
     }
 }

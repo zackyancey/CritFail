@@ -1,14 +1,13 @@
-use std::error::Error;
 use std::str::FromStr;
 
 use crate::{ParseError, Roll};
 
 impl FromStr for Roll {
-    type Err = Box<dyn Error>;
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.is_empty() {
-            Err(ParseError::new("Empty String").into())
+            Err(ParseError::new("Empty String"))
         } else if s.contains('?') {
             Ok(Roll::Attack(s.parse()?))
         } else if "rad+-".contains(&s[0..1]) {

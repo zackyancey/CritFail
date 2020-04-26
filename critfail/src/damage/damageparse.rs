@@ -1,4 +1,3 @@
-use std::error::Error;
 use std::str::FromStr;
 
 use regex::Regex;
@@ -15,26 +14,28 @@ lazy_static! {
 }
 
 impl FromStr for DamagePart {
-    type Err = Box<dyn Error>;
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if let Some(cap) = DICE_RE.captures(s) {
             let sign = if &cap[1] == "-" { -1 } else { 1 };
             Ok(DamagePart::Dice(
-                cap[2].parse()?,
-                (cap[3].parse::<Sides>()?) * sign,
+                cap[2].parse().map_err(|_| ParseError::new(s))?,
+                (cap[3].parse::<Sides>().map_err(|_| ParseError::new(s))?) * sign,
             ))
         } else if let Some(cap) = MODIFIER_RE.captures(s) {
             let sign = if &cap[1] == "-" { -1 } else { 1 };
-            Ok(DamagePart::Modifier(cap[2].parse::<Score>()? * sign))
+            Ok(DamagePart::Modifier(
+                cap[2].parse::<Score>().map_err(|_| ParseError::new(s))? * sign,
+            ))
         } else {
-            Err(Box::new(ParseError::new(s)))
+            Err(ParseError::new(s))
         }
     }
 }
 
 impl FromStr for Damage {
-    type Err = Box<dyn Error>;
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut i = 0;

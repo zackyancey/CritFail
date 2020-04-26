@@ -3,7 +3,7 @@ use rand::Rng;
 use crate::OutcomePart;
 use crate::RollExpression;
 use crate::{CheckOutcome, CritScore};
-use crate::{Score, Sides};
+use crate::{ParseError, Score, Sides};
 
 mod damageoutcome;
 mod damageparse;
@@ -82,8 +82,8 @@ impl Damage {
 impl RollExpression for Damage {
     type Outcome = DamageOutcome;
 
-    fn new(expression: &str) -> Result<Self, ()> {
-        expression.parse().map_err(|_| ())
+    fn new(expression: &str) -> Result<Self, ParseError> {
+        expression.parse()
     }
 
     fn roll(&self) -> Self::Outcome {
@@ -94,8 +94,8 @@ impl RollExpression for Damage {
 impl RollExpression for DamagePart {
     type Outcome = OutcomePart;
 
-    fn new(expression: &str) -> Result<Self, ()> {
-        expression.parse().map_err(|_| ())
+    fn new(expression: &str) -> Result<Self, ParseError> {
+        expression.parse()
     }
 
     fn roll(&self) -> Self::Outcome {

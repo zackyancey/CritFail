@@ -59,7 +59,6 @@ pub use damage::{Damage, DamageOutcome};
 pub use error::ParseError;
 pub(crate) use modifier::ModifiersOutcome;
 pub use modifier::OutcomePart;
-
 pub use roll::{Roll, RollOutcome};
 
 /// The number type that is used when reporting the score of a roll
@@ -77,7 +76,7 @@ pub trait RollExpression: Sized {
     type Outcome: fmt::Display + fmt::Debug;
 
     /// Create a new roll expression by parsing the given string.
-    fn new(expression: &str) -> Result<Self, ()>;
+    fn new(expression: &str) -> Result<Self, ParseError>;
 
     /// Roll the dice and return an outcome.
     fn roll(&self) -> Self::Outcome;

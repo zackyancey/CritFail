@@ -1,5 +1,5 @@
 use crate::RollExpression;
-use crate::{Attack, Check, Damage};
+use crate::{Attack, Check, Damage, ParseError};
 
 pub use rolloutcome::RollOutcome;
 
@@ -42,8 +42,8 @@ pub enum Roll {
 impl RollExpression for Roll {
     type Outcome = RollOutcome;
 
-    fn new(expression: &str) -> Result<Self, ()> {
-        expression.parse().map_err(|_| ())
+    fn new(expression: &str) -> Result<Self, ParseError> {
+        expression.parse()
     }
 
     fn roll(&self) -> Self::Outcome {

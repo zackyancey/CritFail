@@ -1,4 +1,3 @@
-use std::error::Error;
 use std::str::FromStr;
 
 use crate::AdvState::*;
@@ -6,7 +5,7 @@ use crate::Check;
 use crate::ParseError;
 
 impl FromStr for Check {
-    type Err = Box<dyn Error>;
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // Figure out the advantage from the first character
@@ -19,7 +18,7 @@ impl FromStr for Check {
         } else if s.starts_with('+') || s.starts_with('-') {
             (Neutral, 0)
         } else {
-            return Err(Box::new(ParseError::new(s)));
+            return Err(ParseError::new(s));
         };
 
         // If the character after the advantage character is a +, skip it
