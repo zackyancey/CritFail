@@ -48,7 +48,7 @@ struct Window {
 
 #[derive(Debug, Clone)]
 enum Message {
-    ExpressionMessage(usize, ExpressionMessage),
+    ExpressionMsg(usize, ExpressionMsg),
     AddPressed,
     ToggleView,
     ExampleRolled(ExampleSection, String),
@@ -81,7 +81,7 @@ impl Sandbox for Window {
         let example_title = "Click roll on the examples above to see results here";
         Window {
             result_box: ResultBox::with_title(
-                "Enter something to roll in the boxes below and click 'roll'".into(),
+                "Enter something to roll in the boxes below and click 'roll'",
             ),
             example_result_main: ResultBox::with_title(example_title),
             example_result_check: ResultBox::with_title(example_title),
@@ -98,17 +98,17 @@ impl Sandbox for Window {
 
     fn update(&mut self, message: Message) {
         match message {
-            Message::ExpressionMessage(i, ExpressionMessage::RollPressed) => {
+            Message::ExpressionMsg(i, ExpressionMsg::RollPressed) => {
                 let expression = &self.expressions[i];
                 let result = expression.roll();
 
                 self.result_box
                     .update(ResultMessage::from_roll(&expression, result))
             }
-            Message::ExpressionMessage(i, ExpressionMessage::DeletePressed) => {
+            Message::ExpressionMsg(i, ExpressionMsg::DeletePressed) => {
                 self.expressions.remove(i);
             }
-            Message::ExpressionMessage(i, msg) => self.expressions[i].update(msg),
+            Message::ExpressionMsg(i, msg) => self.expressions[i].update(msg),
             Message::AddPressed => self.expressions.push(ExpressionBox::new()),
             Message::ToggleView => {
                 self.view = match self.view {
@@ -169,7 +169,7 @@ impl Sandbox for Window {
                     |col, (i, exp)| {
                         col.push(
                             exp.view()
-                                .map(move |msg| Message::ExpressionMessage(i, msg)),
+                                .map(move |msg| Message::ExpressionMsg(i, msg)),
                         )
                     },
                 );

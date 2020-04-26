@@ -1,12 +1,12 @@
 use super::ExpressionBox;
-use critfail::{Roll, RollExp, Rollable};
+use critfail::{Roll, RollExpression, RollOutcome};
 use iced::{Align, Color, Column, Element, HorizontalAlignment, Length, Row, Space, Text};
 
 #[derive(Clone)]
 pub(super) struct ResultBox {
     name: String,
     expression: String,
-    result: Result<Roll, String>,
+    result: Result<RollOutcome, String>,
 }
 
 impl Default for ResultBox {
@@ -23,7 +23,7 @@ pub(super) enum ResultMessage {
     RollSucceeded {
         name: String,
         expression: String,
-        roll: Roll,
+        roll: RollOutcome,
     },
     RollError {
         name: String,
@@ -100,7 +100,7 @@ impl ResultBox {
 }
 
 impl ResultMessage {
-    pub(super) fn from_roll(expression: &ExpressionBox, roll: Result<Roll, String>) -> Self {
+    pub(super) fn from_roll(expression: &ExpressionBox, roll: Result<RollOutcome, String>) -> Self {
         let name = expression.name().into();
 
         if expression.expression().is_empty() {
@@ -121,7 +121,7 @@ impl ResultMessage {
     }
 
     pub(super) fn from_example(expression: String) -> Self {
-        let rollexp: RollExp = expression.parse().unwrap();
+        let rollexp = Roll::new(&expression).unwrap();
 
         ResultMessage::RollSucceeded {
             name: expression,

@@ -11,14 +11,14 @@ web-serve:
 web-build:
 	cargo fmt
 	cargo build --target wasm32-unknown-unknown
-	wasm-bindgen ./target/wasm32-unknown-unknown/debug/{{app_package}}.wasm --out-dir web/build --web
+	wasm-bindgen ../target/wasm32-unknown-unknown/debug/{{app_package}}.wasm --out-dir web/build --web
 
 web-release:
 	cargo fmt
 	cargo build --target wasm32-unknown-unknown --release --no-default-features --features gui
 	rm -rf ./web/build
-	wasm-bindgen ./target/wasm32-unknown-unknown/release/{{app_package}}.wasm --out-dir web/build --web
-	wasm-opt -Oz web/build/critfail_bg.wasm -o web/build/app_package_bg.wasm
+	wasm-bindgen ../target/wasm32-unknown-unknown/release/{{app_package}}.wasm --out-dir web/build --web
+	wasm-opt -Oz web/build/{{app_package}}_bg.wasm -o web/build/{{app_package}}_bg.wasm
 
 web-deploy: web-release
 	echo rm -vrI $CRITFAIL_SERVER_DIR
@@ -26,8 +26,8 @@ web-deploy: web-release
 	scp -r ./web $CRITFAIL_SERVER:$CRITFAIL_SERVER_DIR
 
 web-size: web-release
-	ls -lh web/build/critfail_bg.wasm
-	stat -c %s web/build/critfail_bg.wasm
+	ls -lh web/build/{{app_package}}_bg.wasm
+	stat -c %s web/build/{{app_package}}_bg.wasm
 
 build:
 	cargo fmt
@@ -40,6 +40,3 @@ run +ARGS="":
 clean:
 	cargo clean
 	rm -rf web/build
-
-test:
-	cd critfail && cargo test --package critfail --features build-outcomes

@@ -1,6 +1,6 @@
 //! This module defines the element that is used for entering attacks.
 use crate::gui::style;
-use critfail::{Roll, RollExp, Rollable};
+use critfail::{Roll, RollExpression, RollOutcome};
 use iced::{
     button, text_input, Align, Button, Column, Element, Length, Row, Text, TextInput,
     VerticalAlignment,
@@ -8,7 +8,7 @@ use iced::{
 
 #[derive(Debug, Clone)]
 /// Messages that can be sent by an expression box.
-pub(super) enum ExpressionMessage {
+pub(super) enum ExpressionMsg {
     /// The Roll button has been pressed.
     RollPressed,
     /// The delete button has been pressed.
@@ -40,30 +40,30 @@ impl ExpressionBox {
         ExpressionBox::default()
     }
 
-    pub(super) fn update(&mut self, message: ExpressionMessage) {
+    pub(super) fn update(&mut self, message: ExpressionMsg) {
         match message {
-            ExpressionMessage::RollPressed => panic!("RollPressed should be handled upstream"),
-            ExpressionMessage::DeletePressed => panic!("DeletePressed should be handled upstream"),
-            ExpressionMessage::NameChanged(name) => self.name = name,
-            ExpressionMessage::RollChanged(roll) => self.roll = roll,
+            ExpressionMsg::RollPressed => panic!("RollPressed should be handled upstream"),
+            ExpressionMsg::DeletePressed => panic!("DeletePressed should be handled upstream"),
+            ExpressionMsg::NameChanged(name) => self.name = name,
+            ExpressionMsg::RollChanged(roll) => self.roll = roll,
         }
     }
 
-    pub(super) fn view(&mut self) -> Element<ExpressionMessage> {
+    pub(super) fn view(&mut self) -> Element<ExpressionMsg> {
         let roll_box = TextInput::new(
             &mut self.roll_box,
             "Dice",
             &self.roll,
-            ExpressionMessage::RollChanged,
+            ExpressionMsg::RollChanged,
         )
         .size(TEXTENTRY_SIZE)
-        .on_submit(ExpressionMessage::RollPressed);
+        .on_submit(ExpressionMsg::RollPressed);
 
         let name_box = TextInput::new(
             &mut self.name_box,
             "Description",
             &self.name,
-            ExpressionMessage::NameChanged,
+            ExpressionMsg::NameChanged,
         )
         .size(TEXTENTRY_SIZE);
 
@@ -76,7 +76,7 @@ impl ExpressionBox {
         .height(Length::Units(TEXTENTRY_SIZE * 2))
         .padding(20)
         .style(style::Button::Primary)
-        .on_press(ExpressionMessage::RollPressed);
+        .on_press(ExpressionMsg::RollPressed);
 
         let delete_button = Button::new(
             &mut self.delete_button,
@@ -85,7 +85,7 @@ impl ExpressionBox {
                 .size(25),
         )
         .style(style::Button::Secondary)
-        .on_press(ExpressionMessage::DeletePressed);
+        .on_press(ExpressionMsg::DeletePressed);
 
         Row::new()
             .spacing(20)
@@ -110,8 +110,8 @@ impl ExpressionBox {
         &self.roll
     }
 
-    pub(super) fn roll(&self) -> Result<Roll, String> {
-        let rollexp: RollExp = self.roll.parse().map_err(|err| format!("{}", err))?;
+    pub(super) fn roll(&self) -> Result<RollOutcome, String> {
+        let rollexp = Roll::new(&self.roll).map_err(|err| format!("{}", err))?;
         Ok(rollexp.roll())
     }
 }

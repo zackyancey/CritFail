@@ -7,7 +7,7 @@ repository = "https://github.com/zackyancey/CritFail"
 
 
 [dependencies]
-critfail = {path = "../critfail"}
+critfail = {path = "../critfail", features = ["wasm-bindgen"]}
 git-version = "0.3.4"
 iced = {version = "0.1", optional = true}
 

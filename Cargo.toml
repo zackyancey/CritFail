@@ -1,7 +1,7 @@
 [workspace]
 
 members = [
-    # "critfail-app",
+    "critfail-app",
     "critfail",
 ]
 

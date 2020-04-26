@@ -1,4 +1,4 @@
-use critfail::{RollExp, Rollable};
+use critfail::{Roll, RollExpression};
 use std::error::Error;
 
 pub fn run_args(args: Vec<String>) -> Result<(), Box<dyn Error>> {
@@ -15,8 +15,7 @@ pub fn run_args(args: Vec<String>) -> Result<(), Box<dyn Error>> {
 }
 
 fn make_roll(roll: &str) -> Result<(), Box<dyn Error>> {
-    let d = roll.parse::<RollExp>()?;
-    let result = d.roll();
+    let result = Roll::new(roll)?.roll();
     println!("{:?}\n{}", result, result);
 
     Ok(())
