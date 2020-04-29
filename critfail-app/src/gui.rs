@@ -1,8 +1,8 @@
 use crate::{GIT_VERSION, VERSION};
 use critfail::AdvState;
 use iced::{
-    button, scrollable, Align, Button, Column, Container, Element, HorizontalAlignment, Length,
-    Row, Sandbox, Scrollable, Settings, Space, Text, VerticalAlignment,
+    button, image, scrollable, Align, Button, Column, Container, Element, HorizontalAlignment,
+    Image, Length, Row, Sandbox, Scrollable, Settings, Space, Text, VerticalAlignment,
 };
 
 mod style;
@@ -67,7 +67,7 @@ impl Sandbox for Window {
     fn new() -> Self {
         Self {
             result_box: ResultBox::with_title(
-                "Enter something to roll in the boxes below and click 'roll'",
+                "Enter something to roll in the boxes below and click 'roll'. Click the '?' button for help.",
             ),
 
             examples_main: ExampleGroup::new(SectionId::Main)
@@ -159,15 +159,20 @@ impl Sandbox for Window {
                         .vertical_alignment(VerticalAlignment::Center),
                     )
                     .on_press(Message::ToggleView)
-                    .style(style::Button::Primary),
+                    .style(style::Button::Secondary),
                 )
                 .width(Length::Fill),
             )
             .push(
-                Text::new("Critfail")
-                    .size(50)
+                Row::new()
+                    .spacing(10)
                     .width(Length::Fill)
-                    .horizontal_alignment(HorizontalAlignment::Center),
+                    .push(Image::new(get_icon()).width(Length::Units(50)))
+                    .push(
+                        Text::new("Critfail")
+                            .size(50)
+                            .horizontal_alignment(HorizontalAlignment::Center),
+                    ),
             )
             .push(Space::with_width(Length::Fill));
 
@@ -262,5 +267,17 @@ fn open_url(url: &str) {
         match webbrowser::open(url) {
             _ => (),
         };
+    }
+}
+
+fn get_icon() -> image::Handle {
+    #[cfg(target_arch = "wasm32")]
+    {
+        "build/icon.png".into()
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        image::Handle::from_memory(include_bytes!("../resources/icon.png").to_vec())
     }
 }

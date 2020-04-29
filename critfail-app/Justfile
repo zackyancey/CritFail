@@ -12,12 +12,14 @@ web-build:
 	cargo fmt
 	cargo build --target wasm32-unknown-unknown
 	wasm-bindgen ../target/wasm32-unknown-unknown/debug/{{app_package}}.wasm --out-dir web/build --web
+	cp -r resources/* web/build/
 
 web-release:
 	cargo fmt
 	cargo build --target wasm32-unknown-unknown --release --no-default-features --features gui
 	rm -rf ./web/build
 	wasm-bindgen ../target/wasm32-unknown-unknown/release/{{app_package}}.wasm --out-dir web/build --web
+	cp -r resources/* web/build/
 	wasm-opt -Oz web/build/{{app_package}}_bg.wasm -o web/build/{{app_package}}_bg.wasm
 
 web-deploy: web-release

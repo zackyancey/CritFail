@@ -1,15 +1,47 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>critfail</title>
-  </head>
-  <body>
-    <script type="module">
+
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>critfail</title>
+  <link href="build/icon.png" rel="icon" type="image/x-icon" />
+
+  <style>
+    .a {
+      display: table;
+      position: absolute;
+      height: 100%;
+      width: 100%;
+    }
+
+    .b {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .c {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="a">
+    <div class="b">
+      <div class="c">
+        <object type="image/svg+xml" data="build/icon_animated.svg" width=200></object>
+        <p style="font-family:'sans-serif'">Loading...</p>
+      </div>
+    </div>
+  </div>
+  <script type="module">
       import init from "./build/critfail-app.js";
 
       init('./build/critfail-app_bg.wasm');
-    </script>
-  </body>
+  </script>
+</body>
+
 </html>

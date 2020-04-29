@@ -9,7 +9,7 @@ repository = "https://github.com/zackyancey/CritFail"
 [dependencies]
 critfail = {path = "../critfail", features = ["wasm-bindgen"]}
 git-version = "0.3.4"
-iced = {version = "0.1", optional = true}
+iced = {version = "0.1", features = ["image"], optional = true}
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 web-sys = { version = "0.3", features = ["Window"] }
