@@ -222,7 +222,7 @@ impl Sandbox for Window {
             View::Help => Scrollable::new(&mut self.help_scroll)
                 .padding(20)
                 .spacing(20)
-                .push(style::text::paragraph("Critfail is a dice simulator, designed in particular for D&D 5e. There are 3 kinds of rolls that can be made: Checks, damage, and attacks. Checks and attacks can be rolled with advantage or disadvantage, and extra damage is automatically rolled for attacks that are critical hists."))
+                .push(style::text::paragraph("Critfail is a dice simulator, designed in particular for D&D 5e. There are 3 kinds of rolls that can be made: Checks, damage, and attacks. Checks and attacks can be rolled with advantage or disadvantage, and extra damage is automatically rolled for attacks that are critical hits."))
                 .push(self.examples_main.view())
 
                 .push(style::text::header("Checks"))
