@@ -24,8 +24,8 @@ web-release:
 
 web-deploy: web-release
 	echo rm -vrI $CRITFAIL_SERVER_DIR
-	ssh $CRITFAIL_SERVER rm -vrI $CRITFAIL_SERVER_DIR
-	scp -r ./web $CRITFAIL_SERVER:$CRITFAIL_SERVER_DIR
+	ssh $CRITFAIL_SERVER rm -vrI $CRITFAIL_SERVER_DIR/*
+	scp -r ./web/* $CRITFAIL_SERVER:$CRITFAIL_SERVER_DIR
 
 web-size: web-release
 	ls -lh web/build/{{app_package}}_bg.wasm
