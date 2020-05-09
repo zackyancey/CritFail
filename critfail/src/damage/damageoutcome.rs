@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::{ModifiersOutcome, OutcomePart, Score};
+use crate::{ModifiersOutcome, OutcomePart, Score, Sides};
 
 /// The outcome of a check roll.
 ///
@@ -34,25 +34,6 @@ impl DamageOutcome {
         self.scores
     }
 
-    /// Create a `DamageOutcome` without rolling an expression.
-    ///
-    /// *This function is only available if the [build-outcomes](index.html#features) feature is enabled*
-    ///
-    /// ```
-    /// use critfail::{DamageOutcome, OutcomePart};
-    /// use OutcomePart::{Dice, Modifier};
-    ///
-    /// let outcome = DamageOutcome::build(vec![Dice(6, vec![4,6,1]), Modifier(4)]);
-    ///
-    /// assert_eq!(outcome.score(), 15);
-    /// assert_eq!(
-    ///     format!("{:?}", outcome),
-    ///     "[4+6+1]+4"
-    /// );
-    #[cfg(any(doc, feature = "build-outcomes"))]
-    pub fn build(scores: Vec<OutcomePart>) -> Self {
-        Self::new(scores)
-    }
 }
 
 impl fmt::Display for DamageOutcome {
@@ -64,6 +45,94 @@ impl fmt::Display for DamageOutcome {
 impl fmt::Debug for DamageOutcome {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:?}", self.scores)
+    }
+}
+
+/// This is used to create a 'fudged' `DamageOutcome` without actually
+/// randomly generating anything.
+///
+/// ```
+/// use critfail::DamageOutcomeBuilder;
+/// // To create a result that could come from rolling '2d8+4-1'
+/// let outcome = DamageOutcomeBuilder::new()
+///     .dice(8, vec![2,6])
+///     .modifier(4)
+///     .modifier(-1)
+///     .build();
+///
+/// assert_eq!(outcome.score(), 11);
+/// assert_eq!(
+///     format!("{:?}", outcome),
+///     "[2+6]+4-1"
+/// );
+/// ```
+#[derive(Default)]
+pub struct DamageOutcomeBuilder {
+    scores: Vec<OutcomePart>,
+}
+])
+impl DamageOutcomeBuilder {
+    /// Create a new DamageOutcomeBuilder.
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    /// Add a constant modifier to the roll. This method can be chained
+    /// multiple times for multiple modifiers.
+    ///
+    /// ```
+    /// use critfail::DamageOutcomeBuilder;
+    ///
+    ///
+    /// // To create a result that could come from rolling '2d8+6-4'
+    /// let outcome = DamageOutcomeBuilder::new()
+    ///     .dice(8, vec![1,6])])
+    ///     .modifier(6)
+    ///     .modifier(-4)
+    ///     .build();
+    ///
+    /// assert_eq!(outcome.score(), 9);
+    /// assert_eq!(
+    ///     format!("{:?}", outcome),
+    ///     "[1+6]+6-4"
+    /// );
+    /// ```
+    pub fn modifier(self, modifier: Score) -> Self {
+        let mut scores = self.scores;
+        scores.push(OutcomePart::Modifier(modifier));
+        Self { scores }
+    }
+
+    /// Add a dice modifier to the roll. This method can be chained
+    /// multiple times for multiple modifiers. `sides` specifies the die
+    /// that was rolled.
+    ///
+    /// ```
+    /// use critfail::DamageOutcomeBuilder;
+    ///
+    ///
+    /// // To create a result that could come from rolling '2d6+3d10-1d4'
+    /// let outcome = DamageOutcomeBuilder::new()
+    ///     .dice(6, vec![5, 1])
+    ///     .dice(10, vec![4, 9, 2])
+    ///     .dice(-4, vec![3])
+    ///     .build();
+    ///
+    /// assert_eq!(outcome.score(), 18);
+    /// assert_eq!(
+    ///     format!("{:?}", outcome),
+    ///     "[5+1]+[4+9+2]-[3]"
+    /// );
+    /// ```
+    pub fn dice(self, sides: Sides, scores: Vec<Score>) -> Self {
+        let mut _scores = self.scores;
+        _scores.push(OutcomePart::Dice(sides, scores));
+        Self { scores: _scores }
+    }
+
+    /// Create a DamageOutcome from this builder.
+    pub fn build(self) -> DamageOutcome {
+        DamageOutcome::new(self.scores)
     }
 }
 

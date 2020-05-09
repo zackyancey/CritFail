@@ -19,6 +19,12 @@ pub enum AdvState {
     Disadvantage,
 }
 
+impl Default for AdvState {
+    fn default() -> Self {
+        Self::Neutral
+    }
+}
+
 /// An ability check - roll a d20, potentially with modifiers or
 /// advantage.
 ///

@@ -1,6 +1,6 @@
 use crate::gui::style;
 use crate::gui::{Message, ResultBox, ResultMessage};
-use critfail::{AdvState, Roll, RollExpression, RollOutcome};
+use critfail::{AdvState, Roll, RollExpression};
 use iced::{button, Button, Color, Column, Element, Length, Row, Text};
 
 #[derive(Debug, Clone, Copy)]

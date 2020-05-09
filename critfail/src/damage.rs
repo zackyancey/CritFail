@@ -8,7 +8,7 @@ use crate::{Score, Sides};
 mod damageoutcome;
 mod damageparse;
 
-pub use damageoutcome::DamageOutcome;
+pub use damageoutcome::{DamageOutcome, DamageOutcomeBuilder};
 
 // TODO: DamagePart should not be `pub` (once Check stops using Damage)
 #[derive(PartialEq, Debug, Clone)]

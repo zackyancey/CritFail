@@ -150,7 +150,7 @@ impl fmt::Debug for CheckOutcome {
     }
 }
 
-/// This is used to create a 'fudged' check outcome without actually
+/// This is used to create a 'fudged' `CheckOutcome` without actually
 /// randomly generating anything.
 ///
 /// ```
@@ -168,22 +168,12 @@ impl fmt::Debug for CheckOutcome {
 ///     "(10)+4-[2]"
 /// );
 /// ```
+#[derive(Default)]
 pub struct CheckOutcomeBuilder {
     adv: AdvState,
     r1: Score,
     r2: Score,
     modifiers: Vec<OutcomePart>,
-}
-
-impl Default for CheckOutcomeBuilder {
-    fn default() -> Self {
-        Self {
-            adv: AdvState::Neutral,
-            r1: 0,
-            r2: 0,
-            modifiers: Vec::new(),
-        }
-    }
 }
 
 impl CheckOutcomeBuilder {
@@ -292,7 +282,8 @@ impl CheckOutcomeBuilder {
     }
 
     /// Add a dice modifier to the roll. This method can be chained
-    /// multiple times for multiple modifiers. `sides` specifies the die that was rolled
+    /// multiple times for multiple modifiers. `sides` specifies the die
+    /// that was rolled.
     ///
     /// ```
     /// use critfail::CheckOutcomeBuilder;
