@@ -2,7 +2,7 @@ use crate::AdvState;
 use crate::AdvState::*;
 use crate::ModifiersOutcome;
 use crate::OutcomePart;
-use crate::Score;
+use crate::{Sides, Score};
 
 use std::cmp::{max, min};
 use std::fmt;
@@ -57,14 +57,24 @@ impl CheckOutcome {
     /// for critial success/failure
     ///
     /// ```
-    /// use critfail::{AdvState, CheckOutcome, OutcomePart};
+    /// use critfail::{AdvState, CheckOutcomeBuilder};
     ///
     /// // (20)+4
-    /// let critical = CheckOutcome::build(AdvState::Neutral, 20, 1, vec![OutcomePart::Modifier(4)]);
+    /// let critical = CheckOutcomeBuilder::new()
+    ///     .check(20)
+    ///     .modifier(4)
+    ///     .build();
+    ///
     /// // (16)+4
-    /// let normal = CheckOutcome::build(AdvState::Neutral, 16, 1, vec![OutcomePart::Modifier(4)]);
+    /// let normal = CheckOutcomeBuilder::new()
+    ///     .check(16)
+    ///     .modifier(4)
+    ///     .build();
     /// // (1)+4
-    /// let fail = CheckOutcome::build(AdvState::Neutral, 1, 1, vec![OutcomePart::Modifier(4)]);
+    /// let fail = CheckOutcomeBuilder::new()
+    ///     .check(1)
+    ///     .modifier(4)
+    ///     .build();
     ///
     /// assert_eq!(critical.score(), 24);
     /// assert_eq!(normal.score(), 20);
@@ -77,14 +87,24 @@ impl CheckOutcome {
     /// Get the score of a `CheckOutcome` that could be a critical success/failure.
     ///
     /// ```
-    /// use critfail::{AdvState, CheckOutcome, OutcomePart, CritScore};
+    /// use critfail::{AdvState, CheckOutcomeBuilder, CritScore};
     ///
     /// // (20)+4
-    /// let critical = CheckOutcome::build(AdvState::Neutral, 20, 1, vec![OutcomePart::Modifier(4)]);
+    /// let critical = CheckOutcomeBuilder::new()
+    ///     .check(20)
+    ///     .modifier(4)
+    ///     .build();
+    ///
     /// // (16)+4
-    /// let normal = CheckOutcome::build(AdvState::Neutral, 16, 1, vec![OutcomePart::Modifier(4)]);
+    /// let normal = CheckOutcomeBuilder::new()
+    ///     .check(16)
+    ///     .modifier(4)
+    ///     .build();
     /// // (1)+4
-    /// let fail = CheckOutcome::build(AdvState::Neutral, 1, 1, vec![OutcomePart::Modifier(4)]);
+    /// let fail = CheckOutcomeBuilder::new()
+    ///     .check(1)
+    ///     .modifier(4)
+    ///     .build();
     ///
     /// assert_eq!(critical.crit_score(), CritScore::Critical);
     /// assert_eq!(normal.crit_score(), CritScore::Normal(20));
@@ -96,35 +116,6 @@ impl CheckOutcome {
             20 => CritScore::Critical,
             _ => CritScore::Normal(self.score()),
         }
-    }
-
-    /// Create a `CheckOutcome` without rolling an expression.
-    ///
-    /// *This function is only available if the [build-outcomes](index.html#features) feature is enabled*
-    ///
-    /// r1 and r2 represent the two values used for a check roll with
-    /// advantage or disadvantage. If the roll is made with value of
-    /// `AdvState::Neutral` for `adv`, r1 will be used.
-    ///
-    /// ```
-    /// use critfail::{AdvState, CheckOutcome, OutcomePart};
-    ///
-    /// let outcome = CheckOutcome::build(
-    ///     AdvState::Neutral,
-    ///     10,
-    ///     5,
-    ///     vec![OutcomePart::Modifier(4)]
-    /// );
-    ///
-    /// assert_eq!(outcome.score(), 14);
-    /// assert_eq!(
-    ///     format!("{:?}", outcome),
-    ///     "(10)+4"
-    /// );
-    /// ```
-    #[cfg(any(doc, feature = "build-outcomes"))]
-    pub fn build(adv: AdvState, r1: Score, r2: Score, modifiers: Vec<OutcomePart>) -> Self {
-        Self::new(adv, r1, r2, modifiers)
     }
 }
 
@@ -156,6 +147,182 @@ impl fmt::Debug for CheckOutcome {
         }
 
         Ok(())
+    }
+}
+
+/// This is used to create a 'fudged' check outcome without actually
+/// randomly generating anything.
+///
+/// ```
+/// use critfail::CheckOutcomeBuilder;
+/// // To create a result that could come from rolling 'r+4-1d4'
+/// let outcome = CheckOutcomeBuilder::new()
+///     .check(10)
+///     .modifier(4)
+///     .dice(-4, vec![2])
+///     .build();
+///
+/// assert_eq!(outcome.score(), 12);
+/// assert_eq!(
+///     format!("{:?}", outcome),
+///     "(10)+4-[2]"
+/// );
+/// ```
+pub struct CheckOutcomeBuilder {
+    adv: AdvState, r1: Score, r2: Score, modifiers: Vec<OutcomePart>
+}
+
+impl Default for CheckOutcomeBuilder {
+    fn default() -> Self {
+        Self{
+            adv: AdvState::Neutral,
+            r1: 0,
+            r2: 0,
+            modifiers: Vec::new()
+        }
+    }
+}
+
+impl CheckOutcomeBuilder {
+    /// Create a new CheckOutcomeBuilder.
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    /// Set the check roll with advantage.
+    ///
+    /// ```
+    /// use critfail::CheckOutcomeBuilder;
+    ///
+    /// let outcome = CheckOutcomeBuilder::new()
+    ///     .check_adv(10, 12)
+    ///     .build();
+    ///
+    /// assert_eq!(outcome.score(), 12);
+    /// assert_eq!(
+    ///     format!("{:?}", outcome),
+    ///     "(12/10)"
+    /// );
+    /// ```
+    pub fn check_adv(self, r1: Score, r2: Score) -> Self {
+        Self{
+            adv: AdvState::Advantage,
+            r1,
+            r2,
+            ..self
+        }
+    }
+
+    /// Set the check roll with disadvantage.
+    ///
+    /// ```
+    /// use critfail::CheckOutcomeBuilder;
+    ///
+    ///
+    /// let outcome = CheckOutcomeBuilder::new()
+    ///     .check_dis(10, 12)
+    ///     .build();
+    ///
+    /// assert_eq!(outcome.score(), 10);
+    /// assert_eq!(
+    ///     format!("{:?}", outcome),
+    ///     "(10/12)"
+    /// );
+    /// ```
+    pub fn check_dis(self, r1: Score, r2: Score) -> Self {
+        Self{
+            adv: AdvState::Disadvantage,
+            r1,
+            r2,
+            ..self
+        }
+    }
+
+    /// Set the check roll without advantage or disadvantage.
+    ///
+    /// ```
+    /// use critfail::CheckOutcomeBuilder;
+    ///
+    ///
+    /// let outcome = CheckOutcomeBuilder::new()
+    ///     .check(8)
+    ///     .build();
+    ///
+    /// assert_eq!(outcome.score(), 8);
+    /// assert_eq!(
+    ///     format!("{:?}", outcome),
+    ///     "(8)"
+    /// );
+    /// ```
+    pub fn check(self, r: Score) -> Self {
+        Self{
+            adv: AdvState::Neutral,
+            r1: r,
+            ..self
+        }
+    }
+
+    /// Add a constant modifier to the roll. This method can be chained
+    /// multiple times for multiple modifiers.
+    ///
+    /// ```
+    /// use critfail::CheckOutcomeBuilder;
+    ///
+    ///
+    /// // To create a result that could come from rolling 'r-2+6'
+    /// let outcome = CheckOutcomeBuilder::new()
+    ///     .check(10)
+    ///     .modifier(-2)
+    ///     .modifier(6)
+    ///     .build();
+    ///
+    /// assert_eq!(outcome.score(), 14);
+    /// assert_eq!(
+    ///     format!("{:?}", outcome),
+    ///     "(10)-2+6"
+    /// );
+    /// ```
+    pub fn modifier(self, modifier: Score) -> Self {
+        let mut modifiers = self.modifiers;
+        modifiers.push(OutcomePart::Modifier(modifier));
+        Self {
+            modifiers,
+            ..self
+        }
+    }
+
+    /// Add a dice modifier to the roll. This method can be chained
+    /// multiple times for multiple modifiers. `sides` specifies the die that was rolled
+    ///
+    /// ```
+    /// use critfail::CheckOutcomeBuilder;
+    ///
+    ///
+    /// // To create a result that could come from rolling 'r-2d4+1d6'
+    /// let outcome = CheckOutcomeBuilder::new()
+    ///     .check(10)
+    ///     .dice(-4, vec![1, 2])
+    ///     .dice(6, vec![5])
+    ///     .build();
+    ///
+    /// assert_eq!(outcome.score(), 12);
+    /// assert_eq!(
+    ///     format!("{:?}", outcome),
+    ///     "(10)-[1+2]+[5]"
+    /// );
+    /// ```
+    pub fn dice(self, sides: Sides, scores: Vec<Score>) -> Self {
+        let mut modifiers = self.modifiers;
+        modifiers.push(OutcomePart::Dice(sides, scores));
+        Self {
+            modifiers,
+            ..self
+        }
+    }
+
+    /// Create a CheckOutcome from this builder.
+    pub fn build(self) -> CheckOutcome {
+        CheckOutcome::new(self.adv, self.r1, self.r2, self.modifiers)
     }
 }
 

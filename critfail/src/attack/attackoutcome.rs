@@ -38,11 +38,14 @@ impl AttackOutcome {
     /// *This function is only available if the [build-outcomes](index.html#features) feature is enabled*
     ///
     /// ```
-    /// use critfail::{DamageOutcome, CheckOutcome, AttackOutcome, AdvState};
+    /// use critfail::{DamageOutcome, CheckOutcomeBuilder, AttackOutcome};
     /// use critfail::OutcomePart::{Dice, Modifier};
     ///
     /// let damage = DamageOutcome::build(vec![Dice(6, vec![4,6,1]), Modifier(4)]);
-    /// let check = CheckOutcome::build(AdvState::Neutral, 10, 5, vec![Modifier(4)]);
+    /// let check = CheckOutcomeBuilder::new()
+    ///     .check(10)
+    ///     .modifier(4)
+    ///     .build();
     ///
     /// let outcome = AttackOutcome::build(check, damage);
     /// ```

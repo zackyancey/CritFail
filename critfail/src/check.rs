@@ -3,7 +3,7 @@ use rand::Rng;
 use crate::Damage;
 use crate::RollExpression;
 
-pub use checkoutcome::{CheckOutcome, CritScore};
+pub use checkoutcome::{CheckOutcome, CheckOutcomeBuilder, CritScore};
 
 mod checkoutcome;
 mod checkparse;

@@ -55,7 +55,7 @@ mod roll;
 mod util;
 
 pub use attack::{Attack, AttackOutcome};
-pub use check::{AdvState, Check, CheckOutcome, CritScore};
+pub use check::{AdvState, Check, CheckOutcome, CheckOutcomeBuilder, CritScore};
 pub use damage::{Damage, DamageOutcome};
 pub use error::ParseError;
 pub(crate) use modifier::ModifiersOutcome;
