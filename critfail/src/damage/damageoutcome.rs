@@ -33,7 +33,6 @@ impl DamageOutcome {
     pub(crate) fn into_modifiers(self) -> ModifiersOutcome {
         self.scores
     }
-
 }
 
 impl fmt::Display for DamageOutcome {
@@ -70,9 +69,9 @@ impl fmt::Debug for DamageOutcome {
 pub struct DamageOutcomeBuilder {
     scores: Vec<OutcomePart>,
 }
-])
+
 impl DamageOutcomeBuilder {
-    /// Create a new DamageOutcomeBuilder.
+    /// Create a new `DamageOutcomeBuilder`.
     pub fn new() -> Self {
         Default::default()
     }
@@ -86,7 +85,7 @@ impl DamageOutcomeBuilder {
     ///
     /// // To create a result that could come from rolling '2d8+6-4'
     /// let outcome = DamageOutcomeBuilder::new()
-    ///     .dice(8, vec![1,6])])
+    ///     .dice(8, vec![1,6])
     ///     .modifier(6)
     ///     .modifier(-4)
     ///     .build();
@@ -130,7 +129,7 @@ impl DamageOutcomeBuilder {
         Self { scores: _scores }
     }
 
-    /// Create a DamageOutcome from this builder.
+    /// Create a `DamageOutcome` from this builder.
     pub fn build(self) -> DamageOutcome {
         DamageOutcome::new(self.scores)
     }

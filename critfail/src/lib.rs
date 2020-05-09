@@ -59,7 +59,7 @@ mod modifier;
 mod roll;
 mod util;
 
-pub use attack::{Attack, AttackOutcome};
+pub use attack::{Attack, AttackOutcome, AttackOutcomeBuilder};
 pub use check::{AdvState, Check, CheckOutcome, CheckOutcomeBuilder, CritScore};
 pub use damage::{Damage, DamageOutcome, DamageOutcomeBuilder};
 pub use error::ParseError;

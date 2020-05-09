@@ -177,7 +177,7 @@ pub struct CheckOutcomeBuilder {
 }
 
 impl CheckOutcomeBuilder {
-    /// Create a new CheckOutcomeBuilder.
+    /// Create a new `CheckOutcomeBuilder`.
     pub fn new() -> Self {
         Default::default()
     }
@@ -308,7 +308,7 @@ impl CheckOutcomeBuilder {
         Self { modifiers, ..self }
     }
 
-    /// Create a CheckOutcome from this builder.
+    /// Create a `CheckOutcome` from this builder.
     pub fn build(self) -> CheckOutcome {
         CheckOutcome::new(self.adv, self.r1, self.r2, self.modifiers)
     }

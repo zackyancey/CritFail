@@ -1,7 +1,7 @@
 use crate::RollExpression;
 use crate::{AdvState, Check, Damage};
 
-pub use attackoutcome::AttackOutcome;
+pub use attackoutcome::{AttackOutcome, AttackOutcomeBuilder};
 
 mod attackoutcome;
 mod attackparse;
