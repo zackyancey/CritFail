@@ -69,7 +69,7 @@ pub type Score = i32;
 pub type Sides = i32;
 
 /// Used for structs defining a set of dice that can be rolled.
-pub trait RollExpression: Sized + FromStr<Err=ParseError>{
+pub trait RollExpression: Sized + FromStr<Err = ParseError> {
     /// The roll result type should implement both Display and Debug.
     /// Display should print out a consise result for the roll, and
     /// Debug should print out the details (eg the value for each rolled

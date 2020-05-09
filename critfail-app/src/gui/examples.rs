@@ -123,11 +123,11 @@ impl Example {
     pub fn roll(&self, adv: Option<AdvState>) -> ResultMessage {
         let outcome = match adv {
             Some(adv) => match &self.roll {
-                Roll::Check(check) => RollOutcome::Check(check.roll_with_advantage(adv)),
-                Roll::Attack(attack) => RollOutcome::Attack(attack.roll_with_advantage(adv)),
+                Roll::Check(check) => check.roll_with_advantage(adv).into(),
+                Roll::Attack(attack) => attack.roll_with_advantage(adv).into(),
                 Roll::Damage(damage) => {
                     debug_assert!(false, "The roll with advantage/disadvantage buttons shouldn't ever be visible for a damage roll.");
-                    RollOutcome::Damage(damage.roll())
+                    damage.roll().into()
                 }
             },
             None => self.roll.roll(),

@@ -44,9 +44,9 @@ impl RollExpression for Roll {
 
     fn roll(&self) -> Self::Outcome {
         match self {
-            Roll::Check(c) => RollOutcome::Check(c.roll()),
-            Roll::Damage(d) => RollOutcome::Damage(d.roll()),
-            Roll::Attack(a) => RollOutcome::Attack(a.roll()),
+            Roll::Check(c) => c.roll().into(),
+            Roll::Damage(d) => d.roll().into(),
+            Roll::Attack(a) => a.roll().into(),
         }
     }
 }
@@ -98,5 +98,23 @@ impl Roll {
             Self::Attack(_) => true,
             _ => false,
         }
+    }
+}
+
+impl From<Check> for Roll {
+    fn from(check: Check) -> Self {
+        Self::Check(check)
+    }
+}
+
+impl From<Damage> for Roll {
+    fn from(damage: Damage) -> Self {
+        Self::Damage(damage)
+    }
+}
+
+impl From<Attack> for Roll {
+    fn from(attack: Attack) -> Self {
+        Self::Attack(attack)
     }
 }

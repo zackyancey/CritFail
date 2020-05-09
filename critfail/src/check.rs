@@ -1,7 +1,7 @@
 use rand::Rng;
 
 use crate::Damage;
-use crate::{RollExpression};
+use crate::RollExpression;
 
 pub use checkoutcome::{CheckOutcome, CritScore};
 

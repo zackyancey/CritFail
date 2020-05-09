@@ -97,3 +97,21 @@ impl fmt::Debug for RollOutcome {
         }
     }
 }
+
+impl From<CheckOutcome> for RollOutcome {
+    fn from(o: CheckOutcome) -> Self {
+        Self::Check(o)
+    }
+}
+
+impl From<DamageOutcome> for RollOutcome {
+    fn from(o: DamageOutcome) -> Self {
+        Self::Damage(o)
+    }
+}
+
+impl From<AttackOutcome> for RollOutcome {
+    fn from(o: AttackOutcome) -> Self {
+        Self::Attack(o)
+    }
+}
