@@ -33,12 +33,6 @@
 //! # Features
 //! * `wasm-bindgen`: Enable this when compiling for wasm32 targets, or
 //!   random number generation won't work.
-//! * `build-outcomes`: Adds the `build` method to outcome types, which
-//!   lets you create an outcome with chosen results. This is used in
-//!   the examples and tests, but the interface may change in the future
-//!   and currently allows you to create impossible results (rolling a
-//!   21 on a d20, etc.) that could result in unpredictable behavior. Be
-//!   aware of this before enabling this feature.
 #![warn(missing_docs)]
 #![doc(
     test(attr(deny(warnings))),

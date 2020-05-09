@@ -13,5 +13,4 @@ regex = "1"
 lazy_static = "1.4.0"
 
 [features]
-build-outcomes = []
 wasm-bindgen = ["rand/wasm-bindgen"]
