@@ -39,7 +39,7 @@ impl DamageOutcome {
     /// *This function is only available if the [build-outcomes](index.html#features) feature is enabled*
     ///
     /// ```
-    /// use critfail::{AdvState, DamageOutcome, OutcomePart};
+    /// use critfail::{DamageOutcome, OutcomePart};
     /// use OutcomePart::{Dice, Modifier};
     ///
     /// let outcome = DamageOutcome::build(vec![Dice(6, vec![4,6,1]), Modifier(4)]);

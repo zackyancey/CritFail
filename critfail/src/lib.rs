@@ -40,6 +40,11 @@
 //!   21 on a d20, etc.) that could result in unpredictable behavior. Be
 //!   aware of this before enabling this feature.
 #![warn(missing_docs)]
+#![doc(
+    test(attr(deny(warnings))),
+    test(attr(allow(unused_variables, unused_mut)))
+)]
+
 #[macro_use]
 extern crate lazy_static;
 

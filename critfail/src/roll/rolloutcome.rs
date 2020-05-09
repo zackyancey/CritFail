@@ -12,7 +12,7 @@ use crate::{AttackOutcome, CheckOutcome, DamageOutcome};
 /// destructure the enum and handle the different types individually.
 ///
 /// ```
-/// use critfail::{RollExpression, Roll, RollOutcome, Score};
+/// use critfail::{RollExpression, Roll, RollOutcome};
 ///
 /// let check: RollOutcome = Roll::new("r+6").unwrap().roll();
 /// let damage: RollOutcome = Roll::new("4d4+6").unwrap().roll();

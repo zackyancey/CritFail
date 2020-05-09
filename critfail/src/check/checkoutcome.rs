@@ -2,7 +2,7 @@ use crate::AdvState;
 use crate::AdvState::*;
 use crate::ModifiersOutcome;
 use crate::OutcomePart;
-use crate::{Sides, Score};
+use crate::{Score, Sides};
 
 use std::cmp::{max, min};
 use std::fmt;
@@ -57,7 +57,7 @@ impl CheckOutcome {
     /// for critial success/failure
     ///
     /// ```
-    /// use critfail::{AdvState, CheckOutcomeBuilder};
+    /// use critfail::CheckOutcomeBuilder;
     ///
     /// // (20)+4
     /// let critical = CheckOutcomeBuilder::new()
@@ -87,7 +87,7 @@ impl CheckOutcome {
     /// Get the score of a `CheckOutcome` that could be a critical success/failure.
     ///
     /// ```
-    /// use critfail::{AdvState, CheckOutcomeBuilder, CritScore};
+    /// use critfail::{CheckOutcomeBuilder, CritScore};
     ///
     /// // (20)+4
     /// let critical = CheckOutcomeBuilder::new()
@@ -169,16 +169,19 @@ impl fmt::Debug for CheckOutcome {
 /// );
 /// ```
 pub struct CheckOutcomeBuilder {
-    adv: AdvState, r1: Score, r2: Score, modifiers: Vec<OutcomePart>
+    adv: AdvState,
+    r1: Score,
+    r2: Score,
+    modifiers: Vec<OutcomePart>,
 }
 
 impl Default for CheckOutcomeBuilder {
     fn default() -> Self {
-        Self{
+        Self {
             adv: AdvState::Neutral,
             r1: 0,
             r2: 0,
-            modifiers: Vec::new()
+            modifiers: Vec::new(),
         }
     }
 }
@@ -205,7 +208,7 @@ impl CheckOutcomeBuilder {
     /// );
     /// ```
     pub fn check_adv(self, r1: Score, r2: Score) -> Self {
-        Self{
+        Self {
             adv: AdvState::Advantage,
             r1,
             r2,
@@ -230,7 +233,7 @@ impl CheckOutcomeBuilder {
     /// );
     /// ```
     pub fn check_dis(self, r1: Score, r2: Score) -> Self {
-        Self{
+        Self {
             adv: AdvState::Disadvantage,
             r1,
             r2,
@@ -255,7 +258,7 @@ impl CheckOutcomeBuilder {
     /// );
     /// ```
     pub fn check(self, r: Score) -> Self {
-        Self{
+        Self {
             adv: AdvState::Neutral,
             r1: r,
             ..self
@@ -285,10 +288,7 @@ impl CheckOutcomeBuilder {
     pub fn modifier(self, modifier: Score) -> Self {
         let mut modifiers = self.modifiers;
         modifiers.push(OutcomePart::Modifier(modifier));
-        Self {
-            modifiers,
-            ..self
-        }
+        Self { modifiers, ..self }
     }
 
     /// Add a dice modifier to the roll. This method can be chained
@@ -314,10 +314,7 @@ impl CheckOutcomeBuilder {
     pub fn dice(self, sides: Sides, scores: Vec<Score>) -> Self {
         let mut modifiers = self.modifiers;
         modifiers.push(OutcomePart::Dice(sides, scores));
-        Self {
-            modifiers,
-            ..self
-        }
+        Self { modifiers, ..self }
     }
 
     /// Create a CheckOutcome from this builder.
