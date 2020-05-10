@@ -11,4 +11,4 @@ Add this to your Cargo.toml:
 critfail = "0.3"
 ```
 
-See the docs for usage and examples.
+See the [docs](http://docs.rs/critfail) for usage and examples.
