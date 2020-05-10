@@ -17,6 +17,21 @@ use crate::{AttackOutcome, CheckOutcome, DamageOutcome};
 /// let check: RollOutcome = Roll::new("r+6").unwrap().roll();
 /// let damage: RollOutcome = Roll::new("4d4+6").unwrap().roll();
 /// let attack: RollOutcome = Roll::new("r+3?2d8+3").unwrap().roll();
+///
+/// fn print_score(outcome: RollOutcome) {
+///     match outcome {
+///         RollOutcome::Check(check) => println!("Check score: {}", check.score()),
+///         RollOutcome::Damage(damage) => println!("Damage score: {}", damage.score()),
+///         RollOutcome::Attack(attack) => {
+///             println!("Check score: {}", attack.check().score());
+///             println!("Damage score: {}", attack.damage().score())
+///         }
+///     }
+/// }
+///
+/// print_score(check);
+/// print_score(damage);
+/// print_score(attack);
 /// ```
 #[derive(Clone)]
 pub enum RollOutcome {

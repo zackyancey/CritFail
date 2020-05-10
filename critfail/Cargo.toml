@@ -4,11 +4,15 @@ version = "0.3.0"
 authors = ["Zack Yancey <mail@zackyancey.com>"]
 edition = "2018"
 repository = "https://github.com/zackyancey/CritFail"
+license-file = "../LICENSE.txt"
+description = "A library for parsing and rolling D&D 5e roll expressions"
+readme = "README.md"
+exclude = ["Justfile"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rand = { version = "0.7" }
+rand = "0.7"
 regex = "1"
 lazy_static = "1.4.0"
 

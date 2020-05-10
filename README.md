@@ -9,6 +9,9 @@ Critfail is available as a desktop application, a cli program, or a web
 app. The web app can be accessed
 [here](http://apps.zackyancey.com/critfail).
 
+The business logic for Critfail is also available as a rust library on
+crates.io. See the docs for more info on using the library.
+
 ## Installation
 
 The desktop version of critfail is a single executable that can be
