@@ -139,7 +139,7 @@ impl fmt::Debug for CheckOutcome {
 
         let mods = format!("{:?}", self.modifiers);
 
-        if mods != "" {
+        if !mods.is_empty() {
             if !(mods.starts_with('+') || mods.starts_with('-')) {
                 write!(f, "+")?
             }

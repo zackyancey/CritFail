@@ -44,7 +44,7 @@ impl FromStr for Damage {
         while i < s.len() {
             // Grab everything up to the next +/-, and see if it's a DamagePart
             let end = s[i + 1..]
-                .find(|c: char| c == '+' || c == '-')
+                .find(['+', '-'])
                 .map(|n| (i + 1) + n)
                 .unwrap_or_else(|| s.len());
 

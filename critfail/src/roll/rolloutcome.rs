@@ -54,10 +54,7 @@ impl RollOutcome {
     /// assert_eq!(Roll::new("r+3?2d8+5").unwrap().roll().is_check(), false);
     /// ```
     pub fn is_check(&self) -> bool {
-        match self {
-            Self::Check(_) => true,
-            _ => false,
-        }
+        matches!(self, Self::Check(_))
     }
 
     /// Return true if this `RollOutcome` is the outcome of a damage roll.
@@ -70,10 +67,7 @@ impl RollOutcome {
     /// assert_eq!(Roll::new("r+3?2d8+5").unwrap().roll().is_damage(), false);
     /// ```
     pub fn is_damage(&self) -> bool {
-        match self {
-            Self::Damage(_) => true,
-            _ => false,
-        }
+        matches!(self, Self::Damage(_))
     }
 
     /// Return true if this `RollOutcome` is the outcome of an attack roll.
@@ -86,10 +80,7 @@ impl RollOutcome {
     /// assert_eq!(Roll::new("r+3?2d8+5").unwrap().roll().is_attack(), true);
     /// ```
     pub fn is_attack(&self) -> bool {
-        match self {
-            Self::Attack(_) => true,
-            _ => false,
-        }
+        matches!(self, Self::Attack(_))
     }
 }
 

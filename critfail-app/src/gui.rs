@@ -49,16 +49,11 @@ enum Message {
     OpenGitHub,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 enum View {
+    #[default]
     Main,
     Help,
-}
-
-impl Default for View {
-    fn default() -> Self {
-        View::Main
-    }
 }
 
 impl Sandbox for Window {
@@ -116,7 +111,7 @@ impl Sandbox for Window {
                 let result = expression.roll(adv);
 
                 self.result_box
-                    .update(ResultMessage::from_roll(&expression, result))
+                    .update(ResultMessage::from_roll(expression, result))
             }
             Message::ExpressionMsg(i, ExpressionMsg::DeletePressed) => {
                 self.expressions.remove(i);
@@ -264,9 +259,7 @@ fn open_url(url: &str) {
     }
     #[cfg(not(target_arch = "wasm32"))]
     {
-        match webbrowser::open(url) {
-            _ => (),
-        };
+        let _ = webbrowser::open(url);
     }
 }
 
